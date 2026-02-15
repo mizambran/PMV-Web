@@ -26,9 +26,9 @@ const ListadoDeProductos = () => {
                   style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                 />
                 <Badge bg='transparent' className="position-absolute top-0 start-0 m-2">
-                  <Button variant='success' className='me-2'><FaEye /></Button>
-                  <Button variant='warning' className='me-2' ><FaPen /> </Button>
-                  <Button variant='danger' onClick={() => eliminarProducto(producto.id, producto.nombre)} ><FaTrash /></Button>
+                  <Button variant='success' className='me-2'size='sm'><FaEye /></Button>
+                  <Button variant='warning' className='me-2' size='sm'><FaPen /> </Button>
+                  <Button variant='danger' onClick={() => eliminarProducto(producto.id, producto.nombre)} size='sm'><FaTrash /></Button>
                 </Badge>
 
                 <Badge bg="secondary" className="position-absolute top-0 end-0 m-2">
