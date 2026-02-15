@@ -15,7 +15,7 @@ const GrillaProductos = () => {
       <h2 className="mb-4 fw-bold text-center">Nuestros Productos</h2>
       <hr />
       
-      {/* xs={1} (1 col en celu), md={2} (2 cols en tablet), lg={3} (3 cols en PC) */}
+      {/* xs={1} (1 col en celu), md={2} (2 cols en tablet), lg={3} (3 cols en PC)*/}
       <Row xs={1} md={2} lg={3} className="g-4 mt-2">
         {productos.map((producto) => (
           <Col key={producto.id}>
