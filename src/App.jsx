@@ -8,6 +8,7 @@ import ListadoDeProductos from './Components/Productos/ListadoDeProductos'
 import Footer from './Components/shared/Footer'
 import LoginYRegistro from './Components/Usuarios/LoginYRegistro'
 import DetalleProducto from './Components/Productos/DetalleProducto'
+import RutaProtegida from './Components/RutasProtegidas/RutaProtegida'
 function App() {
 
   return (
@@ -17,8 +18,10 @@ function App() {
       <DetalleProducto></DetalleProducto>
       <Routes>
         <Route path='/' element={<Inicio></Inicio>} />
-        <Route path='/productos' element={<FormProducto></FormProducto>} />
-        <Route path='/listadoDeProductos' element={<ListadoDeProductos></ListadoDeProductos>} />
+        <Route element={<RutaProtegida />}>
+          <Route path='/productos' element={<FormProducto></FormProducto>} />
+          <Route path='/listadoDeProductos' element={<ListadoDeProductos></ListadoDeProductos>} />
+        </Route>
         <Route path='/login' element={<LoginYRegistro></LoginYRegistro>} />
       </Routes>
       <Footer></Footer>

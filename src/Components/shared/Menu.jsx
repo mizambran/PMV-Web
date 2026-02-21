@@ -1,5 +1,5 @@
 import { Navbar, Container, Nav, NavDropdown, Badge, Button } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa'; 
 import { Link } from 'react-router-dom';
 import { LuStar } from 'react-icons/lu';
@@ -11,6 +11,7 @@ const Menu = () => {
 
   const {logueado, setLogueado} = useContext(UserContext)
 
+  const navigate = useNavigate()
 
   return (
     <>
@@ -25,10 +26,10 @@ const Menu = () => {
         
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-          <NavLink as={Link} to={'/'} className={'nav-link'} >Inicio</NavLink>
+          <NavLink  to={'/'} className={'nav-link'} >Inicio</NavLink>
           {logueado && (
             
-            <div>
+            <>
 
             <NavDropdown title={<span>Productos</span>}>
                 <NavDropdown.Item as={Link} to={'/productos'}>ABM</NavDropdown.Item>
@@ -36,12 +37,12 @@ const Menu = () => {
                 <NavDropdown.Item as={Link} to={'/listadoDeProductos'}>Listado</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title={<span>Clientes</span>}>
-                <NavDropdown.Item as={Link}>ABM</NavDropdown.Item>
+                <NavDropdown.Item as={Link} >ABM</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item as={Link}>Listado</NavDropdown.Item>
+                <NavDropdown.Item as={Link} >Listado</NavDropdown.Item>
             </NavDropdown>
-            <NavLink as={Link} to={'/nosotros'} className={'nav-link'} >Nosotros</NavLink>
-            </div>
+            <NavLink  to={'/nosotros'} className={'nav-link'} >Nosotros</NavLink>
+            </>
           
           )}
           </Nav>
@@ -79,7 +80,9 @@ const Menu = () => {
               <NavDropdown.Item href="#perfil">Mi Perfil</NavDropdown.Item>
               <NavDropdown.Item href="#config">Configuración</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#logout" className="text-danger">
+              <NavDropdown.Item onClick={() => {
+                setLogueado(false);
+                navigate('/')}} className="text-danger">
                 Cerrar Sesión
               </NavDropdown.Item>
             </NavDropdown>
