@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 import { FaUser, FaEnvelope, FaLock, FaGoogle, FaEyeSlash, FaEye, } from 'react-icons/fa'; // O FaEye según tu estado inicial
-import { Link } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { UserContext } from '../../Context/Usuarios/UserContext';
 import { useForm } from 'react-hook-form';
+import Swal from 'sweetalert2';
+import { icons } from 'lucide-react';
 
 const LoginYRegistro = () => {
 
@@ -15,13 +17,32 @@ const LoginYRegistro = () => {
     setVerContraseña(!verContraseña)
   }
 
-  const {registrado, setRegistrado, logueado, setLogueado, ingresoPermitido} = useContext(UserContext)
+  const {usuarios, setUsuarios,registrado, setRegistrado, logueado, setLogueado, ingresoPermitido} = useContext(UserContext)
 
   const toggleRegistrado = () => {
     setRegistrado(!registrado)
     reset();
   }
 
+  const {userPrueba, setUserPrueba} = useState({emailUsuario:"admin@gmail.com", contraseñaUsuario:"010496"})
+
+  const navigate = useNavigate()
+
+  const onSubmit = (data) => {
+    if(registrado) {
+      const usuarioEncontrado = usuarios.find((usuario) => {
+      return  usuario.emailUsuario === data.emailUsuario && usuario.contraseñaUsuario === data.contraseñaUsuario
+      })
+    
+    if(usuarioEncontrado) {
+      setLogueado(true);
+      navigate('/productos');
+      Swal.fire('Ingresaste!', 'Preparate para darle vida al proyecto', 'success')
+    } else {
+      Swal.fire('Credenciales incorrectas', '','error')
+    }
+  }
+ }
   return (
     <Container className="d-flex justify-content-center align-items-center py-5" style={{ minHeight: '80vh' }}>
       <Row className="w-100 justify-content-center">
@@ -42,7 +63,7 @@ const LoginYRegistro = () => {
               </div>
               )}
   
-              <Form>
+              <Form onSubmit={handleSubmit(onSubmit)}>
                 
                 {!registrado && (
                   <Form.Group className="mb-3">
@@ -75,7 +96,7 @@ const LoginYRegistro = () => {
                       type="email" 
                       placeholder="nombre@ejemplo.com" 
                       className="border-start-0"
-                       
+                      {...register("emailUsuario" )}
                     />
                   </div>
                 </Form.Group>
@@ -91,6 +112,7 @@ const LoginYRegistro = () => {
                       type={verContraseña? "text" : "password"} 
                       placeholder="********" 
                       className="border-start-0" 
+                      {...register("contraseñaUsuario")}
                     />
                     {/* Botón visual para el ojo (sin lógica) */}
                        <button type='button' onClick={toggleVerContraseña} style={{border:"transparent", backgroundColor:"transparent"}}>

@@ -7,7 +7,7 @@ export const UserContext = createContext();
 export const UserProvider = ({children}) => {
 
     const usuariosLocalStorage = JSON.parse(localStorage.getItem("usuariosPMV")) || []
-    const [usuarios, setUsuarios] = useState({correo:"demo@gmail.com", contraseña:"1234"})
+    const [usuarios, setUsuarios] = useState([{emailUsuario:"admin@gmail.com", contraseñaUsuario:"010496"}])
 
     useEffect(() => {
         localStorage.setItem("usuariosPMV", JSON.stringify(usuarios))
@@ -26,6 +26,7 @@ export const UserProvider = ({children}) => {
     const crearUsuario = (data) => {
         
     }
+
 
 
     return(

@@ -44,7 +44,7 @@ const GrillaProductos = () => {
                   <span className="fs-4 fw-bold text-primary ms-2">
                     {producto.precio.toLocaleString('es-AR', {style:'currency', currency:'ARS'})}
                   </span>
-                  <Button variant='success' size="sm" className='ms-4' ><LuShoppingCart /> Agregar</Button>
+                  <Button variant='success' size="sm" className='ms-3' ><LuShoppingCart /> Agregar</Button>
                   <Button variant="dark" size="sm" className='me-4' onClick={() => handleShowVer(producto)} >
                     Ver más
                   </Button>
