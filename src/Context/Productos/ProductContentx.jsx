@@ -10,8 +10,11 @@ export const ProductProvider = ({ children }) => {
 
   const [productos, setProductos] = useState(productosLocalStorage);
 
-  // estado para abrir la modal
+  // estado para abrir la modal de formulario Crear/Editar
   const [show, setShow] = useState(false);
+
+  // estado para abrir modal de DetalleProducto.jsx
+  const [showVer, setShowVer] = useState(false)
 
   // estado para poder editar
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
@@ -23,40 +26,28 @@ export const ProductProvider = ({ children }) => {
     setEditando(false);
     setShow(true);
     setProductoSeleccionado(null);
-    reset();
   };
+
+  const handleShowEditar = (producto) => {
+    setProductoSeleccionado(producto)
+    setEditando(true);
+    setShow(true)
+  }
 
   const handleClose = () => {
     setShow(false);
+    setShowVer(false);
     setEditando(false);
     setProductoSeleccionado(null);
-    reset();
   };
 
-  // Productos de prueba
-  const [productosSimulados, setProductosSimulados] = useState([
-    {
-      id: 1,
-      nombre: "Zapatillas Running",
-      precio: 15000,
-      categoria: "Calzado",
-    },
-    { id: 2, nombre: "Camiseta Deportiva", precio: 8500, categoria: "Ropa" },
-    {
-      id: 3,
-      nombre: "Reloj Inteligente",
-      precio: 25000,
-      categoria: "Accesorios",
-    },
-    {
-      id: 4,
-      nombre: "Auriculares Bluetooth",
-      precio: 12000,
-      categoria: "Tecnología",
-    },
-    { id: 5, nombre: "Mochila Urbana", precio: 9800, categoria: "Accesorios" },
-    { id: 6, nombre: "Gorra Ajustable", precio: 4500, categoria: "Ropa" },
-  ]);
+  const handleShowVer = (producto) => {
+    setProductoSeleccionado(producto);
+    setEditando(false)
+    setShowVer(true);
+  }
+
+  
 
   // estado para filtro de busqueda
   const [buscador, setBuscador] = useState("");
@@ -97,6 +88,9 @@ export const ProductProvider = ({ children }) => {
     localStorage.setItem("productosPMV", JSON.stringify(productos));
   }, [productos]);
 
+
+  const [ofertaActiva , setOfertaActiva] = useState(true)
+
   return (
     <ProductContext.Provider
       value={{
@@ -108,14 +102,18 @@ export const ProductProvider = ({ children }) => {
         productosFiltrados,
         show,
         setShow,
+        showVer,
+        setShowVer,
         handleShow,
         handleClose,
+        handleShowEditar,
+        handleShowVer,
         productoSeleccionado,
         setProductoSeleccionado,
         editando,
         setEditando,
-        productosSimulados,
-        setProductosSimulados,
+        ofertaActiva,
+        setOfertaActiva
       }}
     >
       {children}

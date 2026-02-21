@@ -5,7 +5,11 @@ import { FaEye, FaPen, FaTrash } from 'react-icons/fa';
 
 const ListadoDeProductos = () => {
 
-  const {productosFiltrados, eliminarProducto} = useContext(ProductContext)
+  const {productosFiltrados,
+         eliminarProducto,
+         handleShowVer,
+         handleShowEditar
+        } = useContext(ProductContext)
 
   return (
     <Container className="my-2">
@@ -17,17 +21,17 @@ const ListadoDeProductos = () => {
         {productosFiltrados.length > 0 ? (
           productosFiltrados.map((producto) => (
           <Col key={producto.id}>
-            <Card className="h-100 shadow-sm border-0">
+            <Card className="h-100 border-0" style={{boxShadow:"0px 0px 8px #777373"}}>
               {/* Imagen  */}
               <div style={{ height: '250px', overflow: 'hidden', position: 'relative' }}>
                 <Card.Img 
                   variant="top" 
-                  src={producto.imagen || "https://placehold.co/600x400?text=Producto+Demo"} 
-                  style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  src={producto.imagenUno || "https://placehold.co/600x400?text=Producto+Demo"} 
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor:"#fff", padding:"2rem" }}
                 />
                 <Badge bg='transparent' className="position-absolute top-0 start-0 m-2">
-                  <Button variant='success' className='me-2'size='sm'><FaEye /></Button>
-                  <Button variant='warning' className='me-2' size='sm'><FaPen /> </Button>
+                  <Button variant='success' className='me-2'size='sm' onClick={() => handleShowVer(producto)}><FaEye /></Button>
+                  <Button variant='warning' className='me-2' size='sm' onClick={() => handleShowEditar(producto)}><FaPen /> </Button>
                   <Button variant='danger' onClick={() => eliminarProducto(producto.id, producto.nombre)} size='sm'><FaTrash /></Button>
                 </Badge>
 
@@ -47,7 +51,7 @@ const ListadoDeProductos = () => {
                   <span className="fs-5 fw-bold text-primary">
                     {producto.precio.toLocaleString('es-AR', {style:"currency", currency:"ARS"})}
                   </span>
-                  <Button variant="dark" size="sm">
+                  <Button variant="dark" size="sm" onClick={() => handleShowVer(producto)}>
                     Ver más
                   </Button>
                 </div>

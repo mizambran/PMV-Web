@@ -7,12 +7,14 @@ import FormProducto from './Components/Productos/FormProducto'
 import ListadoDeProductos from './Components/Productos/ListadoDeProductos'
 import Footer from './Components/shared/Footer'
 import LoginYRegistro from './Components/Usuarios/LoginYRegistro'
+import DetalleProducto from './Components/Productos/DetalleProducto'
 function App() {
 
   return (
     <>
       <BrowserRouter>
       <Menu></Menu>
+      <DetalleProducto></DetalleProducto>
       <Routes>
         <Route path='/' element={<Inicio></Inicio>} />
         <Route path='/productos' element={<FormProducto></FormProducto>} />

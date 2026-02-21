@@ -1,6 +1,6 @@
 import { Navbar, Container, Nav, NavDropdown, Badge, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa'; // Necesitarás instalar react-icons
+import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa'; 
 import { Link } from 'react-router-dom';
 import { LuStar } from 'react-icons/lu';
 import { useContext } from 'react';
