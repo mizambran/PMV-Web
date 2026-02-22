@@ -9,7 +9,13 @@ import { UserContext } from '../../Context/Usuarios/UserContext';
 
 const Menu = () => {
 
-  const {logueado, setLogueado} = useContext(UserContext)
+  const {logueado, 
+         setLogueado,
+         usuarios,
+         usuarioLogueado,
+         setUsuarioLogueado
+        
+        } = useContext(UserContext)
 
   const navigate = useNavigate()
 
@@ -19,7 +25,13 @@ const Menu = () => {
       <Container>
         {/* Logo / Brand */}
         <Navbar.Brand as={Link} to={'/'} className="fw-bold">
-          PMV <span className="text-primary">Web</span>
+          {usuarioLogueado && usuarioLogueado.nombreEmpresa?
+          (
+            <> {usuarioLogueado.nombreEmpresa.split(' ')[0]}
+               <span className="text-primary"> {usuarioLogueado.nombreEmpresa.split(' ').slice(1).join(' ')}</span></>
+          ) : (
+            <>PMV <span className="text-primary">Web</span></>
+          )}
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -71,7 +83,7 @@ const Menu = () => {
               title={
                 <span>
                   <FaUserCircle className="me-1" size={18} />
-                  Miguel Angel 
+                  {usuarioLogueado?.nombreEmpresa || "Usuario"} 
                 </span>
               } 
               id="user-nav-dropdown" 
@@ -82,7 +94,10 @@ const Menu = () => {
               <NavDropdown.Divider />
               <NavDropdown.Item onClick={() => {
                 setLogueado(false);
-                navigate('/')}} className="text-danger">
+                setUsuarioLogueado(null);
+                localStorage.removeItem("user_session")
+                navigate('/');
+                }} className="text-danger">
                 Cerrar Sesión
               </NavDropdown.Item>
             </NavDropdown>

@@ -52,7 +52,15 @@ const DetalleProducto = () => {
                 <h5>Descripción</h5>
                 <p className="text-muted">{productoSeleccionado?.descripcion}</p>
                 <h5 className="mt-4">Características</h5>
-                <p className="bg-white p-3 rounded border">{productoSeleccionado?.caracteristicas}</p>
+                <p className="bg-white p-3 rounded border">{productoSeleccionado?.caracteristicas
+                ?.split("\n")
+                .filter((linea) => linea.trim() !== "") // Quito lineas vacias
+                .map((linea, index) => (
+                  <ul key={index} className="text-muted" >
+                    <li> {linea.trim()} </li>
+                  </ul>
+                ))
+                }</p>
                 <Button variant='success' size="md"  ><LuShoppingCart /> Agregar al carrito</Button>
                 <Button variant='warning' size="md" className="ms-3" ><MdPayment></MdPayment> Comprar</Button>
               </Col>
