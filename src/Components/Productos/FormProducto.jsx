@@ -189,8 +189,9 @@ const FormProducto = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Caracteristicas</Form.Label>
                     <Form.Control
+                      as="textarea"
                       type="text"
-                      placeholder="Ej: Forrada en cuero, impermeable, 3 bolsillos..."
+                      placeholder="Cada vez que termines una caracteristica, presiona enter"
                       {...register("caracteristicas", {
                         required: "Este campo es obligatorio",
                       })}

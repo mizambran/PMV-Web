@@ -1,88 +1,150 @@
-import React, { useContext, useState } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { FaUser, FaEnvelope, FaLock, FaGoogle, FaEyeSlash, FaEye, } from 'react-icons/fa'; // O FaEye según tu estado inicial
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../Context/Usuarios/UserContext';
-import { useForm } from 'react-hook-form';
-import Swal from 'sweetalert2';
-import { icons } from 'lucide-react';
+import React, { useContext, useEffect, useEffectEvent, useState } from "react";
+import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaGoogle,
+  FaEyeSlash,
+  FaEye,
+} from "react-icons/fa"; // O FaEye según tu estado inicial
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { UserContext } from "../../Context/Usuarios/UserContext";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
+import { v4 as uuidv4 } from "uuid";
 
 const LoginYRegistro = () => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+    setValue,
+    getValues,
+  } = useForm();
 
-  const {register, handleSubmit, reset, formState:{errors}, setValue, getValues} = useForm()
-
-  const [verContraseña, setVerContraseña] = useState(false)
+  const [verContraseña, setVerContraseña] = useState(false);
 
   const toggleVerContraseña = () => {
-    setVerContraseña(!verContraseña)
-  }
+    setVerContraseña(!verContraseña);
+  };
 
-  const {usuarios, setUsuarios,registrado, setRegistrado, logueado, setLogueado, ingresoPermitido} = useContext(UserContext)
+  const {
+    usuarios,
+    setUsuarios,
+    registrado,
+    setRegistrado,
+    logueado,
+    setLogueado,
+    ingresoPermitido,
+    setUsuarioLogueado
+  } = useContext(UserContext);
 
-  const toggleRegistrado = () => {
-    setRegistrado(!registrado)
+ const toggleRegistrado = () => {
+    setRegistrado(!registrado);
     reset();
-  }
+  };
 
-  const {userPrueba, setUserPrueba} = useState({emailUsuario:"admin@gmail.com", contraseñaUsuario:"010496"})
+  useEffect(() => {
+    
+  }, [registrado])
+  
 
-  const navigate = useNavigate()
+
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    if(registrado) {
+    if (registrado) {
       const usuarioEncontrado = usuarios.find((usuario) => {
-      return  usuario.emailUsuario === data.emailUsuario && usuario.contraseñaUsuario === data.contraseñaUsuario
-      })
-    
-    if(usuarioEncontrado) {
-      setLogueado(true);
-      navigate('/productos');
-      Swal.fire('Ingresaste!', 'Preparate para darle vida al proyecto', 'success')
+        return (
+          usuario.emailUsuario === data.emailUsuario &&
+          usuario.contraseñaUsuario === data.contraseñaUsuario
+        );
+      });
+
+      if (usuarioEncontrado) {
+        setLogueado(true);
+        setUsuarioLogueado(usuarioEncontrado)
+        navigate("/productos");
+        localStorage.setItem('user_session', JSON.stringify(usuarioEncontrado))  // para mantenerse logueado
+        Swal.fire(
+          `Bienvenido ${usuarioEncontrado.nombreEmpresa}`,
+          "Preparate para generar muchas ventas!",
+          "success",
+        );
+      } else {
+        Swal.fire("Credenciales incorrectas", "", "error");
+      }
+
+      
     } else {
-      Swal.fire('Credenciales incorrectas', '','error')
-    }
-  }
- }
+        const nuevoUsuario = {
+          id: uuidv4(),
+          nombreEmpresa: data.nombreEmpresa,
+          emailUsuario: data.emailUsuario,
+          contraseñaUsuario: data.contraseñaUsuario
+        }
+
+        setUsuarios([...usuarios, nuevoUsuario]);
+        reset();
+        Swal.fire({
+          title:"Registro Correcto!",
+          text:"Que comiencen las ventas!!!",
+          icon:"success"
+        })
+        setLogueado(true)
+        navigate('/login')
+      }
+
+  };
   return (
-    <Container className="d-flex justify-content-center align-items-center py-5" style={{ minHeight: '80vh' }}>
+    <Container
+      className="d-flex justify-content-center align-items-center py-5"
+      style={{ minHeight: "80vh" }}
+    >
       <Row className="w-100 justify-content-center">
         <Col md={8} lg={5}>
           <Card className="shadow-lg border-0 rounded-4">
             <Card.Body className="p-5">
-              
-              
-              {registrado? (
+              {registrado ? (
                 <div className="text-center mb-4">
-                <h2 className="fw-bold mb-2">Bienvenido! 😉</h2>
-                <p className="text-muted">Completá con tus credenciales para ingresar</p>
-              </div>
+                  <h2 className="fw-bold mb-2">Bienvenido! 😉</h2>
+                  <p className="text-muted">
+                    Completá con tus credenciales para ingresar
+                  </p>
+                </div>
               ) : (
                 <div className="text-center mb-4">
-                <h2 className="fw-bold mb-2"><FaUser /> Crear Cuenta </h2>
-                <p className="text-muted">Completá tus datos para empezar</p>
-              </div>
+                  <h2 className="fw-bold mb-2">
+                    <FaUser /> Crear Cuenta{" "}
+                  </h2>
+                  <p className="text-muted">Completá tus datos para empezar</p>
+                </div>
               )}
-  
+
               <Form onSubmit={handleSubmit(onSubmit)}>
-                
                 {!registrado && (
                   <Form.Group className="mb-3">
-                  <Form.Label>Nombre</Form.Label>
-                  <div className="input-group">
-                    <span className="input-group-text bg-light border-end-0">
-                      <FaUser className="text-muted" />
-                    </span>
-                    <Form.Control 
-                      type="text" 
-                      placeholder="Ej: Miguel" 
-                      className="border-start-0"
-                      {...register("nombre", {
-                        required:"Este campo es obligatorio"
-                      })} 
-                    />
-                  </div>
-                  <Form.Text className='text-danger'> {errors.nombre?.message} </Form.Text>
-                </Form.Group>
+                    <Form.Label>Empresa</Form.Label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-light border-end-0">
+                        <FaUser className="text-muted" />
+                      </span>
+                      <Form.Control
+                        type="text"
+                        placeholder="Ej: Soluciones Tecno"
+                        className="border-start-0"
+                        {...register("nombreEmpresa", {
+                          required: "Este campo es obligatorio",
+                        })}
+                      />
+                    </div>
+                    <Form.Text className="text-danger">
+                      {" "}
+                      {errors.nombre?.message}{" "}
+                    </Form.Text>
+                  </Form.Group>
                 )}
 
                 {/* 2. CAMPO EMAIL (Siempre visible) */}
@@ -92,11 +154,11 @@ const LoginYRegistro = () => {
                     <span className="input-group-text bg-light border-end-0">
                       <FaEnvelope className="text-muted" />
                     </span>
-                    <Form.Control 
-                      type="email" 
-                      placeholder="nombre@ejemplo.com" 
+                    <Form.Control
+                      type="email"
+                      placeholder="nombre@ejemplo.com"
                       className="border-start-0"
-                      {...register("emailUsuario" )}
+                      {...register("emailUsuario")}
                     />
                   </div>
                 </Form.Group>
@@ -108,49 +170,69 @@ const LoginYRegistro = () => {
                     <span className="input-group-text bg-light border-end-0">
                       <FaLock className="text-muted" />
                     </span>
-                    <Form.Control 
-                      type={verContraseña? "text" : "password"} 
-                      placeholder="********" 
-                      className="border-start-0" 
+                    <Form.Control
+                      type={verContraseña ? "text" : "password"}
+                      placeholder="********"
+                      className="border-start-0"
                       {...register("contraseñaUsuario")}
                     />
                     {/* Botón visual para el ojo (sin lógica) */}
-                       <button type='button' onClick={toggleVerContraseña} style={{border:"transparent", backgroundColor:"transparent"}}>
-                        {verContraseña? <FaEyeSlash /> : <FaEye /> }
-                        </button>
+                    <button
+                      type="button"
+                      onClick={toggleVerContraseña}
+                      style={{
+                        border: "transparent",
+                        backgroundColor: "transparent",
+                      }}
+                    >
+                      {verContraseña ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                   </div>
                 </Form.Group>
 
-                
                 {!registrado && (
                   <Form.Group className="mb-4" controlId="formConfirmPassword">
-                  <Form.Label>Confirmar Contraseña</Form.Label>
-                  <div className="input-group">
-                    <span className="input-group-text bg-light border-end-0">
-                      <FaLock className="text-muted" />
-                    </span>
-                    <Form.Control 
-                      type={verContraseña? "text" : "password"} 
-                      placeholder="Repetir contraseña" 
-                      className="border-start-0" 
-                    />
-                    {/* Botón visual para el ojo (sin lógica) */}
-                       <button type='button' onClick={toggleVerContraseña} style={{border:"transparent", backgroundColor:"transparent"}}>
-                        {verContraseña? <FaEyeSlash /> : <FaEye /> }
-                        </button>
-                  </div>
-                </Form.Group>
+                    <Form.Label>Confirmar Contraseña</Form.Label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-light border-end-0">
+                        <FaLock className="text-muted" />
+                      </span>
+                      <Form.Control
+                        type={verContraseña ? "text" : "password"}
+                        placeholder="Repetir contraseña"
+                        className="border-start-0"
+                      />
+                      {/* Botón visual para el ojo (sin lógica) */}
+                      <button
+                        type="button"
+                        onClick={toggleVerContraseña}
+                        style={{
+                          border: "transparent",
+                          backgroundColor: "transparent",
+                        }}
+                      >
+                        {verContraseña ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    </div>
+                  </Form.Group>
                 )}
 
                 {/* Botón Principal */}
                 <div className="d-grid gap-2">
-                  <Button type='submit' variant="primary"  size="lg" className="shadow-sm">
-                    {registrado? "Iniciar Sesión" : "Registrarme"}
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    className="shadow-sm"
+                  >
+                    {registrado ? "Iniciar Sesión" : "Registrarme"}
                   </Button>
                 </div>
 
                 {/* Separador */}
-                <div className="text-center my-3 text-muted small">O ingresá con</div>
+                <div className="text-center my-3 text-muted small">
+                  O ingresá con
+                </div>
 
                 {/* Botón Social */}
                 <div className="d-grid gap-2 mb-4">
@@ -162,14 +244,18 @@ const LoginYRegistro = () => {
                 {/* Link para cambiar de modo */}
                 <div className="text-center mt-4">
                   <p className="mb-0">
-                    {registrado? "¿Aun no tenes cuenta?" : "¿Ya tenés cuenta?"}
-                    <Button type='button' variant='outline-light' className="text-primary fw-bold ms-2" onClick={toggleRegistrado} >
-                      {registrado? "Crear cuenta" : "Iniciar Sesión"} 
+                    {registrado ? "¿Aun no tenes cuenta?" : "¿Ya tenés cuenta?"}
+                    <Button
+                      type="button"
+                      variant="outline-light"
+                      className="text-primary fw-bold ms-2"
+                      onClick={toggleRegistrado}
+                    >
+                      {registrado ? "Crear cuenta" : "Iniciar Sesión"}
                     </Button>
                   </p>
                 </div>
               </Form>
-
             </Card.Body>
           </Card>
         </Col>
