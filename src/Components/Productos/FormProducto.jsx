@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Button, Card, Badge } from "react-bootstrap";
+import { Button, Card, Badge, Carousel } from "react-bootstrap";
 import ListadoDeProductos from "./ListadoDeProductos";
 import { FaPlus } from "react-icons/fa";
 import { ProductContext } from "../../Context/Productos/ProductContentx";
@@ -71,7 +71,9 @@ const FormProducto = () => {
     : "$0";
 
   const categoriaPreview = watch("categoria");
-  const imagenPreview = watch("imagenUno");
+  const imagenPreviewUno = watch("imagenUno");
+  const imagenPreviewDos = watch("imagenDos");
+  const imagenPreviewTres = watch("imagenTres");
 
   // Para limpiar la modal cuando se cierre
   useEffect(() => {
@@ -234,6 +236,7 @@ const FormProducto = () => {
                       <option value="Ropa">Ropa</option>
                       <option value="Calzado">Calzado</option>
                       <option value="Tecnologia">Tecnología</option>
+                      <option value="Electrodomesticos">Electrodomesticos</option>
                     </Form.Select>
                     <Form.Text className="text-danger">
                       {errors.categoria?.message}
@@ -282,9 +285,11 @@ const FormProducto = () => {
                   <div style={{ width: "100%", height: "30rem" }}>
                     <Card style={{ height: "100%" }}>
                       <Card.Body className="d-flex flex-column">
-                        <Card.Img
+                        <Carousel>
+                          <Carousel.Item>
+                            <Card.Img
                           variant="top"
-                          src={imagenPreview || "https://via.placeholder.com/300?text=Sin+Imagen"}
+                          src={imagenPreviewUno || "https://via.placeholder.com/300?text=Sin+Imagen"}
                           style={{
                             width: "100%",
                             height: "300px",
@@ -293,6 +298,34 @@ const FormProducto = () => {
                           }}
                           onError={(e) => {e.target.src = "https://placehold.co/600x400?text=Producto+Demo"}}
                         />
+                          </Carousel.Item>
+                          <Carousel.Item>
+                            <Card.Img
+                          variant="top"
+                          src={imagenPreviewDos || "https://via.placeholder.com/300?text=Sin+Imagen"}
+                          style={{
+                            width: "100%",
+                            height: "300px",
+                            objectFit: "contain",
+                            padding:"0.75rem"
+                          }}
+                          onError={(e) => {e.target.src = "https://placehold.co/600x400?text=Producto+Demo"}}
+                        />
+                          </Carousel.Item>
+                          <Carousel.Item>
+                            <Card.Img
+                          variant="top"
+                          src={imagenPreviewTres || "https://via.placeholder.com/300?text=Sin+Imagen"}
+                          style={{
+                            width: "100%",
+                            height: "300px",
+                            objectFit: "contain",
+                            padding:"0.75rem"
+                          }}
+                          onError={(e) => {e.target.src = "https://placehold.co/600x400?text=Producto+Demo"}}
+                        />
+                          </Carousel.Item>
+                        </Carousel>
                         <Card.Title className="mt-2">{nombrePreview}</Card.Title>
                         <Card.Text className="text-muted small">
                           {descripcionPreview}
