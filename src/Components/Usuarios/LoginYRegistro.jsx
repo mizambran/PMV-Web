@@ -94,7 +94,7 @@ const LoginYRegistro = () => {
           icon:"success"
         })
         setLogueado(true)
-        navigate('/login')
+        navigate('/productos')
       }
 
   };
