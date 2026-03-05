@@ -15,14 +15,16 @@ function App() {
     <>
       <BrowserRouter>
       <Menu></Menu>
-      <DetalleProducto></DetalleProducto>
       <Routes>
         <Route path='/' element={<Inicio></Inicio>} />
         <Route element={<RutaProtegida />}>
           <Route path='/productos' element={<FormProducto></FormProducto>} />
           <Route path='/listadoDeProductos' element={<ListadoDeProductos></ListadoDeProductos>} />
         </Route>
+        <Route path='/:id' element={<DetalleProducto />} />
+        <Route path='/productos/:id' element={<DetalleProducto />} />
         <Route path='/login' element={<LoginYRegistro></LoginYRegistro>} />
+        <Route path='*' element={<p>Error 404</p>} />
       </Routes>
       <Footer></Footer>
       </BrowserRouter>

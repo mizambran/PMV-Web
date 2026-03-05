@@ -3,6 +3,10 @@ import { Container, Row, Col, Card, Button, Badge } from "react-bootstrap";
 import { ProductContext } from "../../Context/Productos/ProductContentx";
 import { FaEye, FaPen, FaTrash } from "react-icons/fa";
 import Table from "react-bootstrap/Table";
+import { LuCloudUpload } from "react-icons/lu";
+import { BsFileEarmarkSpreadsheetFill } from "react-icons/bs";
+import { utils, writeFile } from "xlsx";
+import { useNavigate } from "react-router-dom";
 
 const ListadoDeProductos = () => {
   const {
@@ -18,9 +22,28 @@ const ListadoDeProductos = () => {
     setToggleVista(!toggleVista)
   }
 
+  /* Exportar en Excel */
+
+  const exportarAExcel = () => {
+
+    const hojaDeCalulo = utils.json_to_sheet(productosFiltrados);
+    const libroDeTrabajo = utils.book_new();
+    utils.book_append_sheet(libroDeTrabajo, hojaDeCalulo, "Productos")
+
+    writeFile(libroDeTrabajo, "Productos.xlsx")
+  }
+
+  const navegacion = useNavigate()
+  
+  const verDetalle = (id) => {
+    navegacion(`/productos/${id}`)
+  }
+
   return (
     <div>
       <Button onClick={cambiarVista} className="ms-5" > {toggleVista ? "Ver Grilla" : "Ver Tabla"} </Button>
+      <Button variant="warning" className="ms-4"> <LuCloudUpload /> Importar</Button>
+      <Button variant="success" className="ms-4" onClick={exportarAExcel}><BsFileEarmarkSpreadsheetFill  /> Exportar</Button>
       {/* Vista Grilla */}
       {toggleVista ? (
         <div className="container my-5">
@@ -45,7 +68,7 @@ const ListadoDeProductos = () => {
                       variant="success"
                       className="me-2"
                       size="sm"
-                      onClick={() => handleShowVer(producto)}
+                      onClick={() => verDetalle(producto.id)}
                     >
                       <FaEye />
                     </Button>
@@ -122,7 +145,7 @@ const ListadoDeProductos = () => {
                           variant="success"
                           className="me-2"
                           size="sm"
-                          onClick={() => handleShowVer(producto)}
+                          onClick={() => verDetalle(producto.id)}
                         >
                           <FaEye />
                         </Button>
@@ -169,7 +192,7 @@ const ListadoDeProductos = () => {
                         <Button
                           variant="dark"
                           size="sm"
-                          onClick={() => handleShowVer(producto)}
+                          onClick={() => verDetalle(producto.id)}
                         >
                           Ver más
                         </Button>
@@ -187,10 +210,6 @@ const ListadoDeProductos = () => {
         </Container>
       </div>
       )}
-
-      {/* Vista Tabla */}
-
-      
     </div>
   );
 };

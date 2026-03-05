@@ -1,33 +1,37 @@
 import { useContext } from "react";
 import { ProductContext } from "../../Context/Productos/ProductContentx";
-import { Modal, Button, Carousel, Row, Col, Badge } from "react-bootstrap";
+import {  Button, Carousel, Row, Col, Badge } from "react-bootstrap";
 import { LuShoppingCart } from "react-icons/lu";
 import { MdPayment } from "react-icons/md";
+import { useNavigate, useParams } from "react-router-dom";
+import { convertirPrecio } from "../../Helpers/calculos";
 
 const DetalleProducto = () => {
   const {
-    productoSeleccionado,
-    showVer,
-    handleClose,
+    productos,
     ofertaActiva
   } = useContext(ProductContext);
 
-  // Si no hay producto y no estamos editando, no renderizamos nada para evitar errores
-  if (!productoSeleccionado) return null;
+  const { id } = useParams()
+
+  const productoBuscado = productos.find((producto) => producto.id === id)
+
+  const navegacion = useNavigate()
+
+  const volverAtras = () => {
+    navegacion(-1)
+  }
 
   return (
     <>
-      <Modal show={showVer} onHide={handleClose} size="fullscreen">
-        <Modal.Header closeButton bg="dark" variant="dark">
-          <Modal.Title className="text-center"> Detalles del producto </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
+      <div className="my-5">
+        <div>
             <div className="container py-4">
             <Row>
               <Col lg={7}>
                 {/* Carrusel de Imágenes */}
                 <Carousel variant="dark" className="shadow-sm bg-white rounded">
-                  {[productoSeleccionado?.imagenUno, productoSeleccionado?.imagenDos, productoSeleccionado?.imagenTres]
+                  {[productoBuscado?.imagenUno, productoBuscado?.imagenDos, productoBuscado?.imagenTres]
                     .filter(img => img) // Solo mostramos las que existen
                     .map((img, index) => (
                       <Carousel.Item key={index} style={{ height: '500px' }}>
@@ -44,15 +48,15 @@ const DetalleProducto = () => {
               
               <Col lg={5} className="mt-4 mt-lg-0">
                 <Badge bg="warning" className="mb-2">{ofertaActiva ? (<span className="text-dark">Oferta!</span>) : ""}</Badge>
-                <h1 className="fw-bold">{productoSeleccionado?.nombre}</h1>
+                <h1 className="fw-bold">{productoBuscado?.nombre}</h1>
                 <h2 className="text-primary my-3 fw-bold">
-                  {productoSeleccionado?.precio.toLocaleString('es-AR', { style: "currency", currency: "ARS" })}
+                  {convertirPrecio(productoBuscado?.precio || 0)}
                 </h2>
                 <hr />
                 <h5>Descripción</h5>
-                <p className="text-muted">{productoSeleccionado?.descripcion}</p>
+                <p className="text-muted">{productoBuscado?.descripcion}</p>
                 <h5 className="mt-4">Características</h5>
-                <p className="bg-white p-3 rounded border">{productoSeleccionado?.caracteristicas
+                <div className="bg-white p-3 rounded border">{productoBuscado?.caracteristicas
                 ?.split("\n")
                 .filter((linea) => linea.trim() !== "") // Quito lineas vacias
                 .map((linea, index) => (
@@ -60,14 +64,29 @@ const DetalleProducto = () => {
                     <li> {linea.trim()} </li>
                   </ul>
                 ))
-                }</p>
+                }</div>
                 <Button variant='success' size="md"  ><LuShoppingCart /> Agregar al carrito</Button>
                 <Button variant='warning' size="md" className="ms-3" ><MdPayment></MdPayment> Comprar</Button>
+                <Button variant="secondary" onClick={volverAtras} >  Atras </Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col lg={5} className="mt-5" >
+              <div>
+                <h2>Formas de pago</h2>
+                <ul className="mt-4" >
+                  <li>Tarjeta Naranja</li>
+                  <li>Visa Crédito / Débito</li>
+                  <li>Mercado Pago</li>
+                </ul>
+                <p>Consulta planes de financiación propia!</p>
+                <Button variant="success" >Whatsapp</Button>
+              </div>
               </Col>
             </Row>
           </div>
-        </Modal.Body>
-      </Modal>
+        </div>
+      </div>
     </>
   );
 };

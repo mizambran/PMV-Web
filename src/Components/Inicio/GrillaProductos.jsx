@@ -2,14 +2,20 @@ import React, { useContext } from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { LuShoppingCart, LuStar } from 'react-icons/lu';
 import { ProductContext } from '../../Context/Productos/ProductContentx';
+import { useNavigate } from 'react-router-dom';
 
 
 const GrillaProductos = () => {
   // Estos datos son solo para maquetar. Vos después los traés de tu API/Base de Datos.
   const {productos,
-         ofertaActiva,
-         handleShowVer
+         ofertaActiva
         } = useContext(ProductContext)
+
+  const navegacion = useNavigate()
+  
+  const verDetalle = (id) => {
+    navegacion(`/${id}`)
+  }
 
   return (
     <Container className="my-5">
@@ -45,7 +51,7 @@ const GrillaProductos = () => {
                     {producto.precio.toLocaleString('es-AR', {style:'currency', currency:'ARS'})}
                   </span>
                   <Button variant='success' size="sm" className='ms-3' ><LuShoppingCart /> Agregar</Button>
-                  <Button variant="dark" size="sm" className='me-4' onClick={() => handleShowVer(producto)} >
+                  <Button variant="dark" size="sm" className='me-4' onClick={() => verDetalle(producto.id)} >
                     Ver más
                   </Button>
                 </div>

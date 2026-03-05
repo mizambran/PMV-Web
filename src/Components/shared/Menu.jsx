@@ -45,13 +45,9 @@ const Menu = () => {
 
             <NavDropdown title={<span>Productos</span>}>
                 <NavDropdown.Item as={Link} to={'/productos'}>ABM</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Link} to={'/listadoDeProductos'}>Listado</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title={<span>Clientes</span>}>
                 <NavDropdown.Item as={Link} >ABM</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Link} >Listado</NavDropdown.Item>
             </NavDropdown>
             <NavLink  to={'/nosotros'} className={'nav-link'} >Nosotros</NavLink>
             </>

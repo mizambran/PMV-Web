@@ -379,7 +379,7 @@ const FormProducto = () => {
           </Modal.Body>
         </Modal>
       </div>
-      <ListadoDeProductos></ListadoDeProductos>
+      <ListadoDeProductos />
     </div>
   );
 };
