@@ -9,7 +9,7 @@ const RutaProtegida = () => {
 
   // Si no esta logueado lo manda al inicio
   if(!logueado) {
-    return <Navigate to={'/'} replace />
+    return <Navigate to={'/login'} replace />
   }
   
     // si esta logueado le muestra todo
