@@ -1,12 +1,13 @@
 import Swal from "sweetalert2";
 
 import { createContext, useEffect, useState } from "react";
+import { productosMock } from "../../Helpers/productosBaseDemo";
 
 export const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
   const productosLocalStorage =
-    JSON.parse(localStorage.getItem("productosPMV")) || [];
+    JSON.parse(localStorage.getItem("productosPMV")) || productosMock;
 
   const [productos, setProductos] = useState(productosLocalStorage);
 
