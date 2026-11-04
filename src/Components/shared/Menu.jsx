@@ -49,7 +49,6 @@ const Menu = () => {
             <NavDropdown title={<span>Clientes</span>}>
                 <NavDropdown.Item as={Link} >ABM</NavDropdown.Item>
             </NavDropdown>
-            <NavLink  to={'/nosotros'} className={'nav-link'} >Nosotros</NavLink>
             </>
           
           )}

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import {
   FaUser,
@@ -7,8 +7,8 @@ import {
   FaGoogle,
   FaEyeSlash,
   FaEye,
-} from "react-icons/fa"; // O FaEye según tu estado inicial
-import { Link, Outlet, useNavigate } from "react-router-dom";
+} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../Context/Usuarios/UserContext";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
@@ -20,7 +20,6 @@ const LoginYRegistro = () => {
     handleSubmit,
     reset,
     formState: { errors },
-    setValue,
     getValues,
   } = useForm();
 
@@ -35,10 +34,8 @@ const LoginYRegistro = () => {
     setUsuarios,
     registrado,
     setRegistrado,
-    logueado,
     setLogueado,
-    ingresoPermitido,
-    setUsuarioLogueado
+    setUsuarioLogueado,
   } = useContext(UserContext);
 
   const toggleRegistrado = () => {
@@ -46,16 +43,35 @@ const LoginYRegistro = () => {
     reset();
   };
 
-  useEffect(() => {
-
-  }, [registrado])
-
-
-
   const navigate = useNavigate();
 
   const onSubmit = (data) => {
     if (registrado) {
+      // 1. Verificamos primero si son las credenciales del .env
+      const esAdminEnv =
+        data.emailUsuario === import.meta.env.VITE_API_USUARIO &&
+        data.contraseñaUsuario === import.meta.env.VITE_API_PASSWORD;
+
+      if (esAdminEnv) {
+        const usuarioAdmin = {
+          id: "admin",
+          nombreEmpresa: "Administrador",
+          emailUsuario: data.emailUsuario,
+        };
+        setLogueado(true);
+        setUsuarioLogueado(usuarioAdmin);
+        localStorage.setItem("user_session", JSON.stringify(usuarioAdmin));
+        
+        Swal.fire(
+          "¡Bienvenido Administrador!",
+          "Ingresaste con credenciales de demo.",
+          "success"
+        );
+        navigate("/productos");
+        return; // Cortamos la ejecución acá para que no siga buscando
+      }
+
+      // 2. Si no es admin, buscamos en el array de usuarios del context
       const usuarioEncontrado = usuarios.find((usuario) => {
         return (
           usuario.emailUsuario === data.emailUsuario &&
@@ -65,39 +81,44 @@ const LoginYRegistro = () => {
 
       if (usuarioEncontrado) {
         setLogueado(true);
-        setUsuarioLogueado(usuarioEncontrado)
-        navigate("/productos");
-        localStorage.setItem('user_session', JSON.stringify(usuarioEncontrado))  // para mantenerse logueado
+        setUsuarioLogueado(usuarioEncontrado);
+        localStorage.setItem("user_session", JSON.stringify(usuarioEncontrado));
+        
         Swal.fire(
-          `Bienvenido ${usuarioEncontrado.nombreEmpresa}`,
-          "Preparate para generar muchas ventas!",
-          "success",
+          `¡Bienvenido ${usuarioEncontrado.nombreEmpresa}!`,
+          "¡Preparate para generar muchas ventas!",
+          "success"
         );
+        navigate("/productos");
       } else {
         Swal.fire("Credenciales incorrectas", "", "error");
       }
-
-
     } else {
+      // Lógica de Registro
       const nuevoUsuario = {
         id: uuidv4(),
         nombreEmpresa: data.nombreEmpresa,
         emailUsuario: data.emailUsuario,
-        contraseñaUsuario: data.contraseñaUsuario
-      }
+        contraseñaUsuario: data.contraseñaUsuario,
+      };
 
       setUsuarios([...usuarios, nuevoUsuario]);
       reset();
-      Swal.fire({
-        title: "Registro Correcto!",
-        text: "Que comiencen las ventas!!!",
-        icon: "success"
-      })
-      setLogueado(true)
-      navigate('/productos')
-    }
+      
+      setLogueado(true);
+      setUsuarioLogueado(nuevoUsuario);
+      localStorage.setItem("user_session", JSON.stringify(nuevoUsuario));
 
+      Swal.fire({
+        title: "¡Registro Correcto!",
+        text: "¡Que comiencen las ventas!",
+        icon: "success",
+      });
+      
+      navigate("/productos");
+    }
   };
+
   return (
     <Container
       className="d-flex justify-content-center align-items-center py-5"
@@ -109,7 +130,7 @@ const LoginYRegistro = () => {
             <Card.Body className="p-5">
               {registrado ? (
                 <div className="text-center mb-4">
-                  <h2 className="fw-bold mb-2">Bienvenido! 😉</h2>
+                  <h2 className="fw-bold mb-2">¡Bienvenido! 😉</h2>
                   <p className="text-muted">
                     Completá con tus credenciales para ingresar
                   </p>
@@ -140,14 +161,14 @@ const LoginYRegistro = () => {
                         })}
                       />
                     </div>
-                    <Form.Text className="text-danger">
-                      {" "}
-                      {errors.nombre?.message}{" "}
-                    </Form.Text>
+                    {errors.nombreEmpresa && (
+                      <Form.Text className="text-danger">
+                        {errors.nombreEmpresa.message}
+                      </Form.Text>
+                    )}
                   </Form.Group>
                 )}
 
-                {/* 2. CAMPO EMAIL (Siempre visible) */}
                 <Form.Group className="mb-3">
                   <Form.Label>Correo Electrónico</Form.Label>
                   <div className="input-group">
@@ -158,12 +179,18 @@ const LoginYRegistro = () => {
                       type="email"
                       placeholder="nombre@ejemplo.com"
                       className="border-start-0"
-                      {...register("emailUsuario")}
+                      {...register("emailUsuario", {
+                        required: "El email es obligatorio"
+                      })}
                     />
                   </div>
+                  {errors.emailUsuario && (
+                    <Form.Text className="text-danger">
+                      {errors.emailUsuario.message}
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
-                {/* 3. CAMPO CONTRASEÑA (Siempre visible) */}
                 <Form.Group className="mb-3" controlId="formPassword">
                   <Form.Label>Contraseña</Form.Label>
                   <div className="input-group">
@@ -174,9 +201,10 @@ const LoginYRegistro = () => {
                       type={verContraseña ? "text" : "password"}
                       placeholder="********"
                       className="border-start-0"
-                      {...register("contraseñaUsuario")}
+                      {...register("contraseñaUsuario", {
+                        required: "La contraseña es obligatoria"
+                      })}
                     />
-                    {/* Botón visual para el ojo (sin lógica) */}
                     <button
                       type="button"
                       onClick={toggleVerContraseña}
@@ -184,10 +212,16 @@ const LoginYRegistro = () => {
                         border: "transparent",
                         backgroundColor: "transparent",
                       }}
+                      className="input-group-text bg-white"
                     >
                       {verContraseña ? <FaEyeSlash /> : <FaEye />}
                     </button>
                   </div>
+                  {errors.contraseñaUsuario && (
+                    <Form.Text className="text-danger">
+                      {errors.contraseñaUsuario.message}
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 {!registrado && (
@@ -201,8 +235,11 @@ const LoginYRegistro = () => {
                         type={verContraseña ? "text" : "password"}
                         placeholder="Repetir contraseña"
                         className="border-start-0"
+                        {...register("confirmarContraseña", {
+                          validate: (value) => 
+                            value === getValues("contraseñaUsuario") || "Las contraseñas no coinciden"
+                        })}
                       />
-                      {/* Botón visual para el ojo (sin lógica) */}
                       <button
                         type="button"
                         onClick={toggleVerContraseña}
@@ -210,14 +247,19 @@ const LoginYRegistro = () => {
                           border: "transparent",
                           backgroundColor: "transparent",
                         }}
+                        className="input-group-text bg-white"
                       >
                         {verContraseña ? <FaEyeSlash /> : <FaEye />}
                       </button>
                     </div>
+                    {errors.confirmarContraseña && (
+                      <Form.Text className="text-danger">
+                        {errors.confirmarContraseña.message}
+                      </Form.Text>
+                    )}
                   </Form.Group>
                 )}
 
-                {/* Botón Principal */}
                 <div className="d-grid gap-2">
                   <Button
                     type="submit"
@@ -229,19 +271,16 @@ const LoginYRegistro = () => {
                   </Button>
                 </div>
 
-                {/* Separador */}
                 <div className="text-center my-3 text-muted small">
                   O ingresá con
                 </div>
 
-                {/* Botón Social */}
                 <div className="d-grid gap-2 mb-4">
                   <Button variant="outline-danger" size="lg">
                     <FaGoogle className="me-2" /> Google
                   </Button>
                 </div>
 
-                {/* Link para cambiar de modo */}
                 <div className="text-center mt-4">
                   <p className="mb-0">
                     {registrado ? "¿Aun no tenes cuenta?" : "¿Ya tenés cuenta?"}
