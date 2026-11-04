@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Button, Card, Badge } from "react-bootstrap";
+import React, { useContext, useEffect } from "react";
+import { Button, Card, Badge, Carousel } from "react-bootstrap";
 import ListadoDeProductos from "./ListadoDeProductos";
 import { FaPlus } from "react-icons/fa";
 import { ProductContext } from "../../Context/Productos/ProductContentx";
@@ -14,11 +14,12 @@ const FormProducto = () => {
     setBuscador,
     productos,
     setProductos,
-    productosFiltrados,
     show,
-    setShow,
     handleShow,
     handleClose,
+    productoSeleccionado,
+    editando
+    
   } = useContext(ProductContext);
 
   const {
@@ -38,16 +39,21 @@ const FormProducto = () => {
       caracteristicas: data.caracteristicas,
       precio: data.precio,
       categoria: data.categoria,
-      imagen: data.imagen,
+      imagenUno: data.imagenUno,
+      imagenDos: data.imagenDos,
+      imagenTres: data.imagenTres
     };
 
     setProductos([...productos, nuevoProducto]);
     reset();
+    handleClose()
+
     Swal.fire(
-      "Creaste un producto!",
-      `El producto ${data.nombre} creado con exito!`,
-      "success",
-    );
+      {
+        title:"Creaste un producto!",
+        text:`El producto ${data.nombre} creado con exito!`,
+        icon:"success"
+      })
   };
 
 
@@ -65,7 +71,55 @@ const FormProducto = () => {
     : "$0";
 
   const categoriaPreview = watch("categoria");
-  const imagenPreview = watch("imagen");
+  const imagenPreviewUno = watch("imagenUno");
+  const imagenPreviewDos = watch("imagenDos");
+  const imagenPreviewTres = watch("imagenTres");
+
+  // Para limpiar la modal cuando se cierre
+  useEffect(() => {
+
+    if(!show) {
+      reset()
+    }
+  }, [show, reset])
+
+  // Editando 
+  const guardarCambios = (data) => {
+    const productosEditados = productos.map((producto) => producto.id === productoSeleccionado.id ?
+  {...data, id: producto.id} : producto)
+
+  setProductos(productosEditados);
+  handleClose();
+  Swal.fire('Actualizado', `El producto "${data.nombre}" fue editado correctamente.`, 'success')
+  }
+
+  useEffect(() => {
+    if(editando && productoSeleccionado){
+
+      setValue("nombre", productoSeleccionado.nombre)
+      setValue("descripcion", productoSeleccionado.descripcion)
+      setValue("caracteristicas", productoSeleccionado.caracteristicas)
+      setValue("categoria", productoSeleccionado.categoria)
+      setValue("precio", productoSeleccionado.precio)
+      setValue("imagenUno", productoSeleccionado.imagenUno)
+      setValue("imagenDos", productoSeleccionado.imagenDos)
+      setValue("imagenTres", productoSeleccionado.imagenTres)
+    } else {
+      // Limpiamos el formulario si no estamos editando o el producto es null
+      reset()
+    }
+  }, [productoSeleccionado, editando, setValue, reset])
+
+
+  // En onSubmit guardamos la función de crear y editar producto
+
+  const onSubmit = (data) => {
+    if(editando){
+      guardarCambios(data)
+    } else {
+      crearProducto(data)
+    }
+  }
 
   return (
     <div>
@@ -91,11 +145,11 @@ const FormProducto = () => {
       </div>
       <div>
         <Modal show={show} onHide={handleClose} size="xl">
-          <Modal.Header closeButton>
-            <Modal.Title>Creando Producto</Modal.Title>
+          <Modal.Header closeButton bg="dark" variant="dark">
+            <Modal.Title> {editando ? (<h4>Editando <span className="text-primary">"{productoSeleccionado.nombre}"</span></h4>) : `Creando Producto` } </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form onSubmit={handleSubmit(crearProducto)}>
+            <Form onSubmit={handleSubmit(onSubmit)}>
               <div
                 style={{
                   width: "100%",
@@ -137,8 +191,9 @@ const FormProducto = () => {
                   <Form.Group className="mb-3">
                     <Form.Label>Caracteristicas</Form.Label>
                     <Form.Control
+                      as="textarea"
                       type="text"
-                      placeholder="Ej: Forrada en cuero, impermeable, 3 bolsillos..."
+                      placeholder="Cada vez que termines una caracteristica, presiona enter"
                       {...register("caracteristicas", {
                         required: "Este campo es obligatorio",
                       })}
@@ -181,6 +236,7 @@ const FormProducto = () => {
                       <option value="Ropa">Ropa</option>
                       <option value="Calzado">Calzado</option>
                       <option value="Tecnologia">Tecnología</option>
+                      <option value="Electrodomesticos">Electrodomesticos</option>
                     </Form.Select>
                     <Form.Text className="text-danger">
                       {errors.categoria?.message}
@@ -188,14 +244,38 @@ const FormProducto = () => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>Imagen</Form.Label>
+                    <Form.Label>Imagen 1</Form.Label>
                     <Form.Control
                       type="url"
                       placeholder="Ej: google.com/drive/img1"
-                      {...register("imagen")}
+                      {...register("imagenUno")}
                     />
                     <Form.Text className="text-danger">
-                      {errors.imagen?.message}
+                      {errors.imagenUno?.message}
+                    </Form.Text>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Imagen 2</Form.Label>
+                    <Form.Control
+                      type="url"
+                      placeholder="Ej: google.com/drive/img1"
+                      {...register("imagenDos")}
+                    />
+                    <Form.Text className="text-danger">
+                      {errors.imagenDos?.message}
+                    </Form.Text>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                    <Form.Label>Imagen 3</Form.Label>
+                    <Form.Control
+                      type="url"
+                      placeholder="Ej: google.com/drive/img1"
+                      {...register("imagenTres")}
+                    />
+                    <Form.Text className="text-danger">
+                      {errors.imagenTres?.message}
                     </Form.Text>
                   </Form.Group>
                 </div>
@@ -205,16 +285,47 @@ const FormProducto = () => {
                   <div style={{ width: "100%", height: "30rem" }}>
                     <Card style={{ height: "100%" }}>
                       <Card.Body className="d-flex flex-column">
-                        <Card.Img
+                        <Carousel>
+                          <Carousel.Item>
+                            <Card.Img
                           variant="top"
-                          src={imagenPreview || "https://via.placeholder.com/300?text=Sin+Imagen"}
+                          src={imagenPreviewUno || "https://via.placeholder.com/300?text=Sin+Imagen"}
                           style={{
                             width: "100%",
                             height: "300px",
                             objectFit: "contain",
+                            padding:"0.75rem"
                           }}
                           onError={(e) => {e.target.src = "https://placehold.co/600x400?text=Producto+Demo"}}
                         />
+                          </Carousel.Item>
+                          <Carousel.Item>
+                            <Card.Img
+                          variant="top"
+                          src={imagenPreviewDos || "https://via.placeholder.com/300?text=Sin+Imagen"}
+                          style={{
+                            width: "100%",
+                            height: "300px",
+                            objectFit: "contain",
+                            padding:"0.75rem"
+                          }}
+                          onError={(e) => {e.target.src = "https://placehold.co/600x400?text=Producto+Demo"}}
+                        />
+                          </Carousel.Item>
+                          <Carousel.Item>
+                            <Card.Img
+                          variant="top"
+                          src={imagenPreviewTres || "https://via.placeholder.com/300?text=Sin+Imagen"}
+                          style={{
+                            width: "100%",
+                            height: "300px",
+                            objectFit: "contain",
+                            padding:"0.75rem"
+                          }}
+                          onError={(e) => {e.target.src = "https://placehold.co/600x400?text=Producto+Demo"}}
+                        />
+                          </Carousel.Item>
+                        </Carousel>
                         <Card.Title className="mt-2">{nombrePreview}</Card.Title>
                         <Card.Text className="text-muted small">
                           {descripcionPreview}
@@ -253,7 +364,7 @@ const FormProducto = () => {
                   >
                     <Button
                       type="button"
-                      variant="secondary"
+                      variant="danger"
                       onClick={handleClose}
                     >
                       Cerrar
@@ -268,7 +379,7 @@ const FormProducto = () => {
           </Modal.Body>
         </Modal>
       </div>
-      <ListadoDeProductos></ListadoDeProductos>
+      <ListadoDeProductos />
     </div>
   );
 };

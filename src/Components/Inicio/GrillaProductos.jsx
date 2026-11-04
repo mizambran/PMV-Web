@@ -2,13 +2,20 @@ import React, { useContext } from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { LuShoppingCart, LuStar } from 'react-icons/lu';
 import { ProductContext } from '../../Context/Productos/ProductContentx';
-import { FaPlus, FaShoePrints, FaShopify, FaShoppingCart } from 'react-icons/fa';
-import { FaShopLock } from 'react-icons/fa6';
-import { FiShoppingCart } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+
 
 const GrillaProductos = () => {
   // Estos datos son solo para maquetar. Vos después los traés de tu API/Base de Datos.
-  const {productos} = useContext(ProductContext)
+  const {productos,
+         ofertaActiva
+        } = useContext(ProductContext)
+
+  const navegacion = useNavigate()
+  
+  const verDetalle = (id) => {
+    navegacion(`/${id}`)
+  }
 
   return (
     <Container className="my-5">
@@ -24,11 +31,11 @@ const GrillaProductos = () => {
               <div style={{ height: '250px', overflow: 'hidden', position: 'relative' }}>
                 <Card.Img 
                   variant="top" 
-                  src={producto.imagen} 
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor:"#fff" }}
+                  src={producto.imagenUno} 
+                  style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor:"#fff", padding:"0.75rem" }}
                 />
-                <Badge bg="secondary" className="position-absolute top-0 end-0 m-2">
-                  {producto.categoria}
+                <Badge bg="warning" className="position-absolute top-0 end-0 m-2">
+                  {ofertaActiva? (<span className='text-dark'>Oferta</span>) : ""}
                 </Badge>
 
               </div>
@@ -43,8 +50,8 @@ const GrillaProductos = () => {
                   <span className="fs-4 fw-bold text-primary ms-2">
                     {producto.precio.toLocaleString('es-AR', {style:'currency', currency:'ARS'})}
                   </span>
-                  <Button variant='success' size="sm" className='ms-4' ><LuShoppingCart /> Agregar</Button>
-                  <Button variant="dark" size="sm" className='me-4'>
+                  <Button variant='success' size="sm" className='ms-3' ><LuShoppingCart /> Agregar</Button>
+                  <Button variant="dark" size="sm" className='me-4' onClick={() => verDetalle(producto.id)} >
                     Ver más
                   </Button>
                 </div>

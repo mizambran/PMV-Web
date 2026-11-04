@@ -7,6 +7,8 @@ import FormProducto from './Components/Productos/FormProducto'
 import ListadoDeProductos from './Components/Productos/ListadoDeProductos'
 import Footer from './Components/shared/Footer'
 import LoginYRegistro from './Components/Usuarios/LoginYRegistro'
+import DetalleProducto from './Components/Productos/DetalleProducto'
+import RutaProtegida from './Components/RutasProtegidas/RutaProtegida'
 function App() {
 
   return (
@@ -15,9 +17,14 @@ function App() {
       <Menu></Menu>
       <Routes>
         <Route path='/' element={<Inicio></Inicio>} />
-        <Route path='/productos' element={<FormProducto></FormProducto>} />
-        <Route path='/listadoDeProductos' element={<ListadoDeProductos></ListadoDeProductos>} />
+        <Route element={<RutaProtegida />}>
+          <Route path='/productos' element={<FormProducto></FormProducto>} />
+          <Route path='/listadoDeProductos' element={<ListadoDeProductos></ListadoDeProductos>} />
+        </Route>
+        <Route path='/:id' element={<DetalleProducto />} />
+        <Route path='/productos/:id' element={<DetalleProducto />} />
         <Route path='/login' element={<LoginYRegistro></LoginYRegistro>} />
+        <Route path='*' element={<p>Error 404</p>} />
       </Routes>
       <Footer></Footer>
       </BrowserRouter>

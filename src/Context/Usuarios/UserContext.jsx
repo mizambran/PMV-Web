@@ -7,13 +7,9 @@ export const UserContext = createContext();
 export const UserProvider = ({children}) => {
 
     const usuariosLocalStorage = JSON.parse(localStorage.getItem("usuariosPMV")) || []
-    const [usuarios, setUsuarios] = useState({correo:"demo@gmail.com", contraseña:"1234"})
+    const [usuarios, setUsuarios] = useState(usuariosLocalStorage)
 
-    useEffect(() => {
-        localStorage.setItem("usuariosPMV", JSON.stringify(usuarios))
-    }, [usuarios])
-
-    const [registrado , setRegistrado] = useState(true)
+    const [registrado , setRegistrado] = useState(false)
 
     const [logueado, setLogueado] = useState(false);
 
@@ -23,10 +19,23 @@ export const UserProvider = ({children}) => {
         }
     }
 
-    const crearUsuario = (data) => {
-        
-    }
+    const [usuarioLogueado, setUsuarioLogueado] = useState(null)
 
+
+        useEffect(() => {
+        localStorage.setItem("usuariosPMV", JSON.stringify(usuarios))
+    }, [usuarios])
+
+    useEffect(() => {
+        const sessionGuardada = JSON.parse(localStorage.getItem('user_session'));  // para mantenerse logueado
+
+        if(sessionGuardada){
+        // si existe el usuaario, lo transformamos en objeto
+        const user = JSON.stringify(sessionGuardada);
+        setUsuarioLogueado(user);
+        setLogueado(true)
+        }
+    }, [])
 
     return(
         <UserContext.Provider value={{
@@ -36,7 +45,9 @@ export const UserProvider = ({children}) => {
             setRegistrado,
             logueado,
             setLogueado,
-            ingresoPermitido
+            ingresoPermitido,
+            usuarioLogueado,
+            setUsuarioLogueado
              }}>
             {children}
         </UserContext.Provider>

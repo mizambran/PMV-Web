@@ -1,6 +1,6 @@
 import { Navbar, Container, Nav, NavDropdown, Badge, Button } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
-import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa'; // Necesitarás instalar react-icons
+import { Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa'; 
 import { Link } from 'react-router-dom';
 import { LuStar } from 'react-icons/lu';
 import { useContext } from 'react';
@@ -9,8 +9,15 @@ import { UserContext } from '../../Context/Usuarios/UserContext';
 
 const Menu = () => {
 
-  const {logueado, setLogueado} = useContext(UserContext)
+  const {logueado, 
+         setLogueado,
+         usuarios,
+         usuarioLogueado,
+         setUsuarioLogueado
+        
+        } = useContext(UserContext)
 
+  const navigate = useNavigate()
 
   return (
     <>
@@ -18,30 +25,32 @@ const Menu = () => {
       <Container>
         {/* Logo / Brand */}
         <Navbar.Brand as={Link} to={'/'} className="fw-bold">
-          PMV <span className="text-primary">Web</span>
+          {usuarioLogueado && usuarioLogueado.nombreEmpresa?
+          (
+            <> {usuarioLogueado.nombreEmpresa.split(' ')[0]}
+               <span className="text-primary"> {usuarioLogueado.nombreEmpresa.split(' ').slice(1).join(' ')}</span></>
+          ) : (
+            <>PMV <span className="text-primary">Web</span></>
+          )}
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-          <NavLink as={Link} to={'/'} className={'nav-link'} >Inicio</NavLink>
+          <NavLink  to={'/'} className={'nav-link'} >Inicio</NavLink>
           {logueado && (
             
-            <div>
+            <>
 
             <NavDropdown title={<span>Productos</span>}>
                 <NavDropdown.Item as={Link} to={'/productos'}>ABM</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Link} to={'/listadoDeProductos'}>Listado</NavDropdown.Item>
             </NavDropdown>
             <NavDropdown title={<span>Clientes</span>}>
-                <NavDropdown.Item as={Link}>ABM</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Link}>Listado</NavDropdown.Item>
+                <NavDropdown.Item as={Link} >ABM</NavDropdown.Item>
             </NavDropdown>
-            <NavLink as={Link} to={'/nosotros'} className={'nav-link'} >Nosotros</NavLink>
-            </div>
+            <NavLink  to={'/nosotros'} className={'nav-link'} >Nosotros</NavLink>
+            </>
           
           )}
           </Nav>
@@ -70,7 +79,7 @@ const Menu = () => {
               title={
                 <span>
                   <FaUserCircle className="me-1" size={18} />
-                  Miguel Angel 
+                  {usuarioLogueado?.nombreEmpresa || "Usuario"} 
                 </span>
               } 
               id="user-nav-dropdown" 
@@ -79,7 +88,12 @@ const Menu = () => {
               <NavDropdown.Item href="#perfil">Mi Perfil</NavDropdown.Item>
               <NavDropdown.Item href="#config">Configuración</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#logout" className="text-danger">
+              <NavDropdown.Item onClick={() => {
+                setLogueado(false);
+                setUsuarioLogueado(null);
+                localStorage.removeItem("user_session")
+                navigate('/');
+                }} className="text-danger">
                 Cerrar Sesión
               </NavDropdown.Item>
             </NavDropdown>
