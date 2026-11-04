@@ -9,7 +9,7 @@ export const UserProvider = ({children}) => {
     const usuariosLocalStorage = JSON.parse(localStorage.getItem("usuariosPMV")) || []
     const [usuarios, setUsuarios] = useState(usuariosLocalStorage)
 
-    const [registrado , setRegistrado] = useState(true)
+    const [registrado , setRegistrado] = useState(false)
 
     const [logueado, setLogueado] = useState(false);
 

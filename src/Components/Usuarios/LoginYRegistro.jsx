@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useEffectEvent, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import {
   FaUser,
@@ -41,15 +41,15 @@ const LoginYRegistro = () => {
     setUsuarioLogueado
   } = useContext(UserContext);
 
- const toggleRegistrado = () => {
+  const toggleRegistrado = () => {
     setRegistrado(!registrado);
     reset();
   };
 
   useEffect(() => {
-    
+
   }, [registrado])
-  
+
 
 
   const navigate = useNavigate();
@@ -77,25 +77,25 @@ const LoginYRegistro = () => {
         Swal.fire("Credenciales incorrectas", "", "error");
       }
 
-      
-    } else {
-        const nuevoUsuario = {
-          id: uuidv4(),
-          nombreEmpresa: data.nombreEmpresa,
-          emailUsuario: data.emailUsuario,
-          contraseñaUsuario: data.contraseñaUsuario
-        }
 
-        setUsuarios([...usuarios, nuevoUsuario]);
-        reset();
-        Swal.fire({
-          title:"Registro Correcto!",
-          text:"Que comiencen las ventas!!!",
-          icon:"success"
-        })
-        setLogueado(true)
-        navigate('/productos')
+    } else {
+      const nuevoUsuario = {
+        id: uuidv4(),
+        nombreEmpresa: data.nombreEmpresa,
+        emailUsuario: data.emailUsuario,
+        contraseñaUsuario: data.contraseñaUsuario
       }
+
+      setUsuarios([...usuarios, nuevoUsuario]);
+      reset();
+      Swal.fire({
+        title: "Registro Correcto!",
+        text: "Que comiencen las ventas!!!",
+        icon: "success"
+      })
+      setLogueado(true)
+      navigate('/productos')
+    }
 
   };
   return (
