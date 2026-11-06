@@ -8,7 +8,8 @@ export const productosMock = [
     categoria: "Tecnologia",
     imagenUno: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1390557814400-3375ff98717a?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1546435770-a3e426fa47ce?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1546435770-a3e426fa47ce?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "b2c3d4e5-f6a7-8901-bcde-234567890123",
@@ -19,7 +20,8 @@ export const productosMock = [
     categoria: "Ropa",
     imagenUno: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1559551409-dadc959f76b8?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1559551409-dadc959f76b8?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:true
   },
   {
     id: "c3d4e5f6-a7b8-9012-cdef-345678901234",
@@ -30,7 +32,8 @@ export const productosMock = [
     categoria: "Calzado",
     imagenUno: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1552346154-21d32810baa3?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1552346154-21d32810baa3?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "d4e5f6a7-b8c9-0123-def0-456789012345",
@@ -41,7 +44,8 @@ export const productosMock = [
     categoria: "Accesorios",
     imagenUno: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:true
   },
   {
     id: "e5f6a7b8-c9d0-1234-ef01-567890123456",
@@ -52,7 +56,8 @@ export const productosMock = [
     categoria: "Electrodomesticos",
     imagenUno: "https://images.unsplash.com/photo-1517668808822-9ebb02f2a0e6?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1520087619250-584c0cbd35e8?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "f6a7b8c9-d0e1-2345-f012-678901234567",
@@ -63,7 +68,8 @@ export const productosMock = [
     categoria: "Accesorios",
     imagenUno: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "a7b8c9d0-e1f2-3456-0123-789012345678",
@@ -74,7 +80,8 @@ export const productosMock = [
     categoria: "Tecnologia",
     imagenUno: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1616012480717-fd9867059ca0?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1551645120-d70bfe84c826?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "b8c9d0e1-f2a3-4567-1234-890123456789",
@@ -85,7 +92,8 @@ export const productosMock = [
     categoria: "Electrodomesticos",
     imagenUno: "https://images.unsplash.com/photo-1585237833075-81d39255e2b0?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1629853926577-d5d140e79ec9?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1629853926577-d5d140e79ec9?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "c9d0e1f2-a3b4-5678-2345-901234567890",
@@ -96,7 +104,8 @@ export const productosMock = [
     categoria: "Ropa",
     imagenUno: "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1604176354204-9268737828e4?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1582552938357-32b906df40cb?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:false
   },
   {
     id: "d0e1f2a3-b4c5-6789-3456-012345678901",
@@ -107,6 +116,7 @@ export const productosMock = [
     categoria: "Calzado",
     imagenUno: "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&q=80&w=800",
     imagenDos: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?auto=format&fit=crop&q=80&w=800",
-    imagenTres: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=800"
+    imagenTres: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&q=80&w=800",
+    ofertaActiva:true
   }
 ];
