@@ -5,16 +5,16 @@ import { LuShoppingCart } from "react-icons/lu";
 import { MdPayment } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import { convertirPrecio } from "../../Helpers/calculos";
+import { productosMock } from "../../Helpers/productosBaseDemo";
 
 const DetalleProducto = () => {
-  const {
-    productos,
-    ofertaActiva
-  } = useContext(ProductContext);
+  
+  // Para demo luego uso mi API
+   const productos = [...productosMock]
 
   const { id } = useParams()
 
-  const productoBuscado = productos.find((producto) => producto.id === id)
+  const productoBuscado = productos.find((p) => p.id === id)
 
   const navegacion = useNavigate()
 
@@ -47,7 +47,7 @@ const DetalleProducto = () => {
               </Col>
               
               <Col lg={5} className="mt-4 mt-lg-0">
-                <Badge bg="warning" className="mb-2">{ofertaActiva ? (<span className="text-dark">Oferta!</span>) : ""}</Badge>
+                <Badge bg="warning" className="mb-2">{productoBuscado.ofertaActiva ? (<span className="text-dark">Oferta!</span>) : ""}</Badge>
                 <h1 className="fw-bold">{productoBuscado?.nombre}</h1>
                 <h2 className="text-primary my-3 fw-bold">
                   {convertirPrecio(productoBuscado?.precio || 0)}
