@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import {
   FaUser,
@@ -34,6 +34,7 @@ const LoginYRegistro = () => {
     setUsuarios,
     registrado,
     setRegistrado,
+    logueado,
     setLogueado,
     setUsuarioLogueado,
   } = useContext(UserContext);
@@ -118,6 +119,12 @@ const LoginYRegistro = () => {
       navigate("/productos");
     }
   };
+
+  useEffect(() => {
+    if (logueado) {
+      navigate('/productos', { replace: true });
+    }
+  }, [logueado, navigate]);
 
   return (
     <Container

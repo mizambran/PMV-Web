@@ -2,12 +2,12 @@ import React, { useContext } from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { LuShoppingCart, LuStar } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
-import { productosMock } from '../../Helpers/productosBaseDemo';
+import { ProductContext } from '../../Context/Productos/ProductContentx';
 
 const GrillaProductos = () => {
   
   // Para una demo luego uso la API de mi back
-  const productos = [...productosMock]
+  const {productos} = useContext(ProductContext)
 
   const navegacion = useNavigate()
   
