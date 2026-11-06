@@ -1,15 +1,13 @@
 import React, { useContext } from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { LuShoppingCart, LuStar } from 'react-icons/lu';
-import { ProductContext } from '../../Context/Productos/ProductContentx';
 import { useNavigate } from 'react-router-dom';
-
+import { productosMock } from '../../Helpers/productosBaseDemo';
 
 const GrillaProductos = () => {
-  // Estos datos son solo para maquetar. Vos después los traés de tu API/Base de Datos.
-  const {productos,
-         ofertaActiva
-        } = useContext(ProductContext)
+  
+  // Para una demo luego uso la API de mi back
+  const productos = [...productosMock]
 
   const navegacion = useNavigate()
   
@@ -35,7 +33,7 @@ const GrillaProductos = () => {
                   style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor:"#fff", padding:"0.75rem" }}
                 />
                 <Badge bg="warning" className="position-absolute top-0 end-0 m-2">
-                  {ofertaActiva? (<span className='text-dark'>Oferta</span>) : ""}
+                  {producto.ofertaActiva? (<span className='text-dark'>Oferta</span>) : ""}
                 </Badge>
 
               </div>
