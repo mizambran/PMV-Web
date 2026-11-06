@@ -1,41 +1,26 @@
 import { createContext, useEffect, useState } from "react";
 
-
-
 export const UserContext = createContext();
 
 export const UserProvider = ({children}) => {
+    // 1. Leemos el localStorage ANTES de inicializar los estados
+    const usuariosLocalStorage = JSON.parse(localStorage.getItem("usuariosPMV")) || [];
+    const sessionGuardada = JSON.parse(localStorage.getItem('user_session'));
 
-    const usuariosLocalStorage = JSON.parse(localStorage.getItem("usuariosPMV")) || []
-    const [usuarios, setUsuarios] = useState(usuariosLocalStorage)
+    const [usuarios, setUsuarios] = useState(usuariosLocalStorage);
+    const [registrado, setRegistrado] = useState(true);
+    
+    // 2. Inicializamos los estados directamente con el valor de la sesión
+    // Si hay sesión, logueado arranca en true. Si no, en false.
+    const [logueado, setLogueado] = useState(sessionGuardada ? true : false);
+    const [usuarioLogueado, setUsuarioLogueado] = useState(sessionGuardada || null);
 
-    const [registrado , setRegistrado] = useState(false)
-
-    const [logueado, setLogueado] = useState(false);
-
-    const ingresoPermitido = (correoRecibido, contraseñaRecibida) => {
-        if(correoRecibido === correo && contraseñaRecibida === contraseña){
-            setLogueado(!logueado)
-        }
-    }
-
-    const [usuarioLogueado, setUsuarioLogueado] = useState(null)
-
-
-        useEffect(() => {
+    // Guardamos los usuarios nuevos cuando se registran
+    useEffect(() => {
         localStorage.setItem("usuariosPMV", JSON.stringify(usuarios))
     }, [usuarios])
 
-    useEffect(() => {
-        const sessionGuardada = JSON.parse(localStorage.getItem('user_session'));  // para mantenerse logueado
-
-        if(sessionGuardada){
-        // si existe el usuaario, lo transformamos en objeto
-        const user = JSON.stringify(sessionGuardada);
-        setUsuarioLogueado(user);
-        setLogueado(true)
-        }
-    }, [])
+    // (Eliminamos el useEffect que cargaba la sesión porque ya lo hacemos sincrónicamente arriba)
 
     return(
         <UserContext.Provider value={{
@@ -45,10 +30,9 @@ export const UserProvider = ({children}) => {
             setRegistrado,
             logueado,
             setLogueado,
-            ingresoPermitido,
             usuarioLogueado,
             setUsuarioLogueado
-             }}>
+        }}>
             {children}
         </UserContext.Provider>
     )
