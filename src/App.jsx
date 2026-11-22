@@ -9,6 +9,7 @@ import Footer from './Components/shared/Footer'
 import LoginYRegistro from './Components/Usuarios/LoginYRegistro'
 import DetalleProducto from './Components/Productos/DetalleProducto'
 import RutaProtegida from './Components/RutasProtegidas/RutaProtegida'
+import BotonWhatsApp from './Components/shared/BotonWhatsapp'
 function App() {
 
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path='/login' element={<LoginYRegistro></LoginYRegistro>} />
         <Route path='*' element={<p>Error 404</p>} />
       </Routes>
+      <BotonWhatsApp telefono={'5493816096533'} mensaje={"Hola! Estuve viendo tu sitio web, quiero hablar con un asesor."} />
       <Footer></Footer>
       </BrowserRouter>
     </>
