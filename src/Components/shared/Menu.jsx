@@ -91,7 +91,7 @@ const Menu = () => {
                 align="end"
               >
                 <NavDropdown.Item href="#perfil">Mi Perfil</NavDropdown.Item>
-                <NavDropdown.Item href="#config">Configuración</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to={'/config'} >Configuración</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleCerrarSesion} className="text-danger">
                   Cerrar Sesión
