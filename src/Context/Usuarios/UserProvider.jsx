@@ -3,11 +3,26 @@ import { UserContext } from "./UserContext";
 import { guardarLocalStorage, leerLocalStorage } from "../../Helpers/almacenamiento";
 import { datosDeSesion } from "../../Helpers/seguridad";
 
+const CONFIG_WHATSAPP_INICIAL = {
+  telefono: "5493810000000",
+  mensaje: "¡Hola! Quisiera hacer una consulta sobre los productos.",
+  telefonoMayorista: "5493810303456",
+  mensajeMayorista: "¡Hola! Quiero ser revendedor.",
+};
+
 export const UserProvider = ({ children }) => {
+  // Usuarios registrados. Se lee la clave nueva ("usuarios_pmv") y, si no existe,
+  // la de la versión anterior ("usuariosPMV") para no perder cuentas ya creadas.
   const [usuarios, setUsuarios] = useState(() => {
-    const guardados = leerLocalStorage("usuariosPMV", []);
+    const guardados = leerLocalStorage("usuarios_pmv", null) ?? leerLocalStorage("usuariosPMV", []);
     return Array.isArray(guardados) ? guardados : [];
   });
+
+  // Configuración global de WhatsApp (se edita desde /config)
+  const [configWhatsapp, setConfigWhatsapp] = useState(() => ({
+    ...CONFIG_WHATSAPP_INICIAL,
+    ...leerLocalStorage("config_whatsapp_pmv", {}),
+  }));
   const [registrado, setRegistrado] = useState(true);
 
   // La sesión se lee una sola vez y se limpia: si una versión anterior
@@ -29,8 +44,12 @@ export const UserProvider = ({ children }) => {
   }, [usuarioLogueado]);
 
   useEffect(() => {
-    guardarLocalStorage("usuariosPMV", usuarios);
+    guardarLocalStorage("usuarios_pmv", usuarios);
   }, [usuarios]);
+
+  useEffect(() => {
+    guardarLocalStorage("config_whatsapp_pmv", configWhatsapp);
+  }, [configWhatsapp]);
 
   return (
     <UserContext.Provider
@@ -43,6 +62,8 @@ export const UserProvider = ({ children }) => {
         usuarioLogueado,
         setUsuarioLogueado,
         cerrarSesion,
+        configWhatsapp,
+        setConfigWhatsapp,
       }}
     >
       {children}

@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import { ProductContext } from "../../Context/Productos/ProductContext";
+import { UserContext } from "../../Context/Usuarios/UserContext";
 import { Button, Carousel, Row, Col, Badge, Card } from "react-bootstrap";
 import { LuShoppingCart } from "react-icons/lu";
 import { MdPayment } from "react-icons/md";
@@ -8,10 +9,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { convertirPrecio } from "../../Helpers/calculos";
 import { IMAGEN_PLACEHOLDER, imagenesDelProducto } from "../../Helpers/imagenes";
 
-const WHATSAPP_NEGOCIO = "5493816096533";
+const WHATSAPP_POR_DEFECTO = "5493816096533";
 
 const DetalleProducto = () => {
   const { productos } = useContext(ProductContext);
+  const { configWhatsapp } = useContext(UserContext);
+  const telefonoWhatsapp = (configWhatsapp?.telefono || WHATSAPP_POR_DEFECTO).replace(/\D/g, "");
   const { id } = useParams();
   const navegacion = useNavigate();
 
@@ -37,7 +40,7 @@ const DetalleProducto = () => {
     );
   }
 
-  const linkWhatsApp = `https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(
+  const linkWhatsApp = `https://wa.me/${telefonoWhatsapp}?text=${encodeURIComponent(
     `Hola! Quiero consultar por "${productoBuscado.nombre}" (${convertirPrecio(productoBuscado.precio)}) y los planes de financiación.`
   )}`;
 
