@@ -1,11 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, Card, Badge, Carousel, Modal, Form } from "react-bootstrap";
 import ListadoDeProductos from "./ListadoDeProductos";
 import { FaPlus } from "react-icons/fa";
-import { ProductContext } from "../../Context/Productos/ProductContentx";
-import { useForm } from "react-hook-form";
+import { ProductContext } from "../../Context/Productos/ProductContext";
+import { useForm, useWatch } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import { convertirPrecio } from "../../Helpers/calculos";
+import { IMAGEN_PLACEHOLDER } from "../../Helpers/imagenes";
+
+// Categorías del mayorista. "valor" es lo que se guarda en cada producto.
+const CATEGORIAS = [
+  { valor: "Celulares", texto: "Celulares" },
+  { valor: "Modulos", texto: "Módulos y pantallas" },
+  { valor: "Repuestos", texto: "Repuestos" },
+  { valor: "Accesorios", texto: "Accesorios" },
+  { valor: "Tecnologia", texto: "Tecnología" },
+  { valor: "Electrodomesticos", texto: "Electrodomésticos" },
+];
 
 const FormProducto = () => {
   const { productos, setProductos } = useContext(ProductContext);
@@ -21,8 +33,8 @@ const FormProducto = () => {
   const [filtroPrecio, setFiltroPrecio] = useState("");
 
   // Lógica de filtrado y ordenamiento combinada
-  let productosFiltrados = productos?.filter((producto) => {
-    const matchBuscador = producto.nombre.toLowerCase().includes(buscador.toLowerCase());
+  const productosFiltrados = productos.filter((producto) => {
+    const matchBuscador = (producto.nombre || "").toLowerCase().includes(buscador.trim().toLowerCase());
     const matchCategoria = filtroCategoria === "" || producto.categoria === filtroCategoria;
     const matchOferta = filtroOferta === "" || (filtroOferta === "true" ? producto.ofertaActiva : !producto.ofertaActiva);
     return matchBuscador && matchCategoria && matchOferta;
@@ -34,7 +46,7 @@ const FormProducto = () => {
     productosFiltrados.sort((a, b) => b.precio - a.precio);
   }
 
-  const { register, handleSubmit, reset, formState: { errors }, setValue, watch } = useForm();
+  const { register, handleSubmit, reset, formState: { errors }, setValue, control } = useForm();
 
   const handleShow = () => {
     setEditando(false);
@@ -58,16 +70,17 @@ const FormProducto = () => {
 
   const crearProducto = (data) => {
     const nuevoProducto = { id: uuidv4(), ...data };
-    setProductos([...productos, nuevoProducto]);
+    setProductos((actuales) => [...actuales, nuevoProducto]);
     handleClose();
     Swal.fire({ title: "¡Creaste un producto!", text: `El producto ${data.nombre} creado con éxito!`, icon: "success" });
   };
 
   const guardarCambios = (data) => {
-    const productosEditados = productos.map((producto) =>
-      producto.id === productoSeleccionado.id ? { ...data, id: producto.id } : producto
+    setProductos((actuales) =>
+      actuales.map((producto) =>
+        producto.id === productoSeleccionado.id ? { ...producto, ...data, id: producto.id } : producto
+      )
     );
-    setProductos(productosEditados);
     handleClose();
     Swal.fire("Actualizado", `El producto "${data.nombre}" fue editado correctamente.`, "success");
   };
@@ -88,12 +101,12 @@ const FormProducto = () => {
     }
   }, [productoSeleccionado, editando, setValue]);
 
-  const nombrePreview = watch("nombre");
-  const descripcionPreview = watch("descripcion");
-  const precioPreview = watch("precio") ? Number(watch("precio")).toLocaleString("es-AR", { style: "currency", currency: "ARS" }) : "$0";
-  const categoriaPreview = watch("categoria");
-  const imagenPreviewUno = watch("imagenUno");
-  const ofertaPreview = watch("ofertaActiva");
+  // useWatch (en lugar de watch) es compatible con el React Compiler / reglas de hooks
+  const [nombrePreview, descripcionPreview, precioWatch, categoriaPreview, imagenPreviewUno, ofertaPreview] = useWatch({
+    control,
+    name: ["nombre", "descripcion", "precio", "categoria", "imagenUno", "ofertaActiva"],
+  });
+  const precioPreview = convertirPrecio(precioWatch);
 
   return (
     <div>
@@ -113,11 +126,7 @@ const FormProducto = () => {
             />
             <Form.Select style={{ maxWidth: "150px" }} onChange={(e) => setFiltroCategoria(e.target.value)}>
               <option value="">Todas</option>
-              <option value="Accesorios">Accesorios</option>
-              <option value="Ropa">Ropa</option>
-              <option value="Calzado">Calzado</option>
-              <option value="Tecnologia">Tecnología</option>
-              <option value="Electrodomesticos">Electrodomesticos</option>
+              {CATEGORIAS.map((cat) => <option key={cat.valor} value={cat.valor}>{cat.texto}</option>)}
             </Form.Select>
             <Form.Select style={{ maxWidth: "130px" }} onChange={(e) => setFiltroOferta(e.target.value)}>
               <option value="">Todas</option>
@@ -144,11 +153,12 @@ const FormProducto = () => {
                 <Form.Group className="mb-3"><Form.Label>Titulo</Form.Label><Form.Control type="text" {...register("nombre", { required: "Obligatorio" })} /><Form.Text className="text-danger">{errors.nombre?.message}</Form.Text></Form.Group>
                 <Form.Group className="mb-3"><Form.Label>Descripción Breve</Form.Label><Form.Control type="text" {...register("descripcion", { required: "Obligatorio" })} /><Form.Text className="text-danger">{errors.descripcion?.message}</Form.Text></Form.Group>
                 <Form.Group className="mb-3"><Form.Label>Características</Form.Label><Form.Control as="textarea" {...register("caracteristicas", { required: "Obligatorio" })} /><Form.Text className="text-danger">{errors.caracteristicas?.message}</Form.Text></Form.Group>
-                <Form.Group className="mb-3"><Form.Label>Precio</Form.Label><Form.Control type="number" step={0.01} {...register("precio", { required: "Obligatorio", valueAsNumber: true })} /><Form.Text className="text-danger">{errors.precio?.message}</Form.Text></Form.Group>
+                <Form.Group className="mb-3"><Form.Label>Precio</Form.Label><Form.Control type="number" step={0.01} {...register("precio", { required: "Obligatorio", valueAsNumber: true, min: { value: 0, message: "El precio no puede ser negativo" } })} /><Form.Text className="text-danger">{errors.precio?.message}</Form.Text></Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Categoría</Form.Label>
                   <Form.Select {...register("categoria", { required: "Seleccionar" })}>
-                    <option value="">Seleccionar</option><option value="Accesorios">Accesorios</option><option value="Ropa">Ropa</option><option value="Calzado">Calzado</option><option value="Tecnologia">Tecnología</option><option value="Electrodomesticos">Electrodomesticos</option>
+                    <option value="">Seleccionar</option>
+                    {CATEGORIAS.map((cat) => <option key={cat.valor} value={cat.valor}>{cat.texto}</option>)}
                   </Form.Select>
                 </Form.Group>
                 <Form.Group className="mb-3"><Form.Check type="switch" label="¿Marcar como Oferta Activa?" {...register("ofertaActiva")} /></Form.Group>
@@ -160,7 +170,7 @@ const FormProducto = () => {
                 <Card style={{ height: "30rem" }}>
                   <Card.Body className="d-flex flex-column position-relative">
                     {ofertaPreview && <Badge bg="warning" className="position-absolute top-0 start-0 m-3 z-3 text-dark">¡Oferta!</Badge>}
-                    <Carousel><Carousel.Item><Card.Img variant="top" src={imagenPreviewUno || "https://placehold.co/600x400?text=Producto+Demo"} style={{ width: "100%", height: "250px", objectFit: "contain", padding: "0.75rem" }} /></Carousel.Item></Carousel>
+                    <Carousel><Carousel.Item><Card.Img variant="top" src={imagenPreviewUno || IMAGEN_PLACEHOLDER} alt="Vista previa" style={{ width: "100%", height: "250px", objectFit: "contain", padding: "0.75rem" }} /></Carousel.Item></Carousel>
                     <Card.Title className="mt-2">{nombrePreview}</Card.Title>
                     <Card.Text className="text-muted small">{descripcionPreview}</Card.Text>
                     <div className="mt-auto d-flex justify-content-between align-items-center">

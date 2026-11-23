@@ -1,5 +1,5 @@
-
 import { Carousel, Container, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const HeaderSlider = () => {
   return (
@@ -16,7 +16,7 @@ const HeaderSlider = () => {
           <Container>
             <h2 className="display-4 fw-bold">Bienvenido a PMV Web</h2>
             <p className="fs-5">Crea, gestiona y visualiza tus productos de forma rápida y sencilla.</p>
-            <Button variant="primary" size="lg" className="mt-3 px-4 shadow">
+            <Button as={Link} to="/catalogo" variant="primary" size="lg" className="mt-3 px-4 shadow">
               Explorar Catálogo
             </Button>
           </Container>
@@ -34,7 +34,7 @@ const HeaderSlider = () => {
         <Carousel.Caption className="text-center pb-5 mb-5">
           <h2 className="display-4 fw-bold">Gestioná tu Inventario</h2>
           <p className="fs-5">Herramientas diseñadas para potenciar tu negocio digital.</p>
-          <Button variant="outline-light" size="lg" className="mt-3 px-4">
+          <Button as={Link} to="/productos" variant="outline-light" size="lg" className="mt-3 px-4">
             Crear Producto
           </Button>
         </Carousel.Caption>
