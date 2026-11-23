@@ -1,6 +1,6 @@
 const BotonWhatsApp = ({ telefono, mensaje }) => {
   const abrirWhatsApp = () => {
-    const numeroLimpio = telefono.replace(/\D/g, '');
+    const numeroLimpio = (telefono || "").replace(/\D/g, "");
     const mensajeCodificado = encodeURIComponent(mensaje);
     const url = `https://wa.me/${numeroLimpio}?text=${mensajeCodificado}`;
 
