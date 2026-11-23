@@ -1,16 +1,15 @@
 import { Navbar, Container, Nav, NavDropdown, Badge, Button } from 'react-bootstrap';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
-import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa'; 
+import { FaShoppingCart, FaUser, FaUserCircle } from 'react-icons/fa';
 import { LuStar } from 'react-icons/lu';
 import { useContext } from 'react';
 import { UserContext } from '../../Context/Usuarios/UserContext';
 
 const Menu = () => {
   const {
-    logueado, 
-    setLogueado,
+    logueado,
     usuarioLogueado,
-    setUsuarioLogueado,
+    cerrarSesion,
     setRegistrado
   } = useContext(UserContext)
 
@@ -22,9 +21,7 @@ const Menu = () => {
   }
 
   const handleCerrarSesion = () => {
-    setLogueado(false);
-    setUsuarioLogueado(null);
-    localStorage.removeItem("user_session");
+    cerrarSesion();
     navigate('/');
   }
 
@@ -44,34 +41,30 @@ const Menu = () => {
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        
+
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            <NavLink to={'/'} className={'nav-link'}>Inicio</NavLink>
+            <NavLink to={'/'} end className={'nav-link'}>Inicio</NavLink>
+            <NavLink to={'/catalogo'} className={'nav-link'}>Catálogo</NavLink>
             {logueado && (
-              <>
-                <NavDropdown title={<span>Productos</span>}>
-                  <NavDropdown.Item as={Link} to={'/productos'}>ABM</NavDropdown.Item>
-                </NavDropdown>
-                <NavDropdown title={<span>Clientes</span>}>
-                  <NavDropdown.Item as={Link}>ABM</NavDropdown.Item>
-                </NavDropdown>
-              </>
+              <NavDropdown title={<span>Productos</span>}>
+                <NavDropdown.Item as={Link} to={'/productos'}>ABM</NavDropdown.Item>
+              </NavDropdown>
             )}
           </Nav>
 
           {logueado ? (
             <Nav className="align-items-center">
-              {/* Favoritos */}
-              <Button variant="outline-warning" className="position-relative me-3 border-0">
+              {/* Favoritos (pendiente de implementar) */}
+              <Button variant="outline-warning" className="position-relative me-3 border-0" title="Favoritos (próximamente)" aria-label="Favoritos">
                 <LuStar size={20} />
               </Button>
-              {/* Carrito de Compras */}
-              <Button variant="outline-info" className="position-relative me-3 border-0">
+              {/* Carrito de Compras (pendiente de implementar) */}
+              <Button variant="outline-info" className="position-relative me-3 border-0" title="Carrito (próximamente)" aria-label="Carrito">
                 <FaShoppingCart size={20} />
-                <Badge 
-                  pill 
-                  bg="danger" 
+                <Badge
+                  pill
+                  bg="danger"
                   className="position-absolute top-0 start-100 translate-middle"
                   style={{ fontSize: '0.7rem' }}
                 >
@@ -80,18 +73,17 @@ const Menu = () => {
               </Button>
 
               {/* Usuario Logueado */}
-              <NavDropdown 
+              <NavDropdown
                 title={
                   <span>
                     <FaUserCircle className="me-1" size={18} />
-                    {usuarioLogueado?.nombreEmpresa || "Usuario"} 
+                    {usuarioLogueado?.nombreEmpresa || "Usuario"}
                   </span>
-                } 
-                id="user-nav-dropdown" 
+                }
+                id="user-nav-dropdown"
                 align="end"
               >
-                <NavDropdown.Item href="#perfil">Mi Perfil</NavDropdown.Item>
-                <NavDropdown.Item href="#config">Configuración</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to={'/productos'}>Mis productos</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleCerrarSesion} className="text-danger">
                   Cerrar Sesión

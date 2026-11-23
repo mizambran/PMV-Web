@@ -1,15 +1,17 @@
 import Swal from "sweetalert2";
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { ProductContext } from "./ProductContext";
 import { productosMock } from "../../Helpers/productosBaseDemo";
-
-export const ProductContext = createContext();
+import { guardarLocalStorage, leerLocalStorage } from "../../Helpers/almacenamiento";
 
 export const ProductProvider = ({ children }) => {
-  // Leemos de localStorage o cargamos el mock de prueba
-  const productosLocalStorage = JSON.parse(localStorage.getItem("productosPMV")) || productosMock;
-  const [productos, setProductos] = useState(productosLocalStorage);
+  // Inicialización perezosa: localStorage se lee una sola vez (no en cada render)
+  // y si el dato está corrupto se vuelve al mock de prueba.
+  const [productos, setProductos] = useState(() => {
+    const guardados = leerLocalStorage("productosPMV", null);
+    return Array.isArray(guardados) ? guardados : productosMock;
+  });
 
-  // Única función que modifica el estado global
   const eliminarProducto = (idRecibido, nombreRecibido) => {
     Swal.fire({
       title: "¿Seguro que quiere eliminar?",
@@ -19,12 +21,11 @@ export const ProductProvider = ({ children }) => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Sí",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        const productosActualizados = productos.filter(
-          (producto) => producto.id !== idRecibido
-        );
-        setProductos(productosActualizados);
+        // Actualización funcional: usa siempre la lista más reciente
+        setProductos((actuales) => actuales.filter((producto) => producto.id !== idRecibido));
         Swal.fire({
           title: "¡Eliminado!",
           text: `El producto ${nombreRecibido} fue eliminado`,
@@ -35,7 +36,7 @@ export const ProductProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    localStorage.setItem("productosPMV", JSON.stringify(productos));
+    guardarLocalStorage("productosPMV", productos);
   }, [productos]);
 
   return (
@@ -44,3 +45,5 @@ export const ProductProvider = ({ children }) => {
     </ProductContext.Provider>
   );
 };
+
+export default ProductProvider;

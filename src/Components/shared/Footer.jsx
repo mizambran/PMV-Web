@@ -23,13 +23,10 @@ const Footer = () => {
                 <Link to="/" className="text-decoration-none text-secondary">Inicio</Link>
               </li>
               <li className="mb-2">
-                <Link to="/listadoDeProductos" className="text-decoration-none text-secondary">Productos</Link>
+                <Link to="/catalogo" className="text-decoration-none text-secondary">Productos</Link>
               </li>
               <li className="mb-2">
-                <Link to="/nosotros" className="text-decoration-none text-secondary">Sobre Nosotros</Link>
-              </li>
-              <li className="mb-2">
-                <Link to="/contacto" className="text-decoration-none text-secondary">Contacto</Link>
+                <a href="https://wa.me/5493816096533" target="_blank" rel="noopener noreferrer" className="text-decoration-none text-secondary">Contacto por WhatsApp</a>
               </li>
             </ul>
           </Col>

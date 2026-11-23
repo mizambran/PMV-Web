@@ -3,32 +3,33 @@ import './App.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Menu from './Components/shared/Menu'
 import Inicio from './Components/Inicio/Inicio'
+import GrillaProductos from './Components/Inicio/GrillaProductos'
 import FormProducto from './Components/Productos/FormProducto'
-import ListadoDeProductos from './Components/Productos/ListadoDeProductos'
 import Footer from './Components/shared/Footer'
 import LoginYRegistro from './Components/Usuarios/LoginYRegistro'
 import DetalleProducto from './Components/Productos/DetalleProducto'
 import RutaProtegida from './Components/RutasProtegidas/RutaProtegida'
-function App() {
+import PaginaNoEncontrada from './Components/shared/PaginaNoEncontrada'
 
+function App() {
   return (
-    <>
-      <BrowserRouter>
-      <Menu></Menu>
+    <BrowserRouter>
+      <Menu />
       <Routes>
-        <Route path='/' element={<Inicio></Inicio>} />
-        <Route element={<RutaProtegida />}>
-          <Route path='/productos' element={<FormProducto></FormProducto>} />
-          <Route path='/listadoDeProductos' element={<ListadoDeProductos></ListadoDeProductos>} />
-        </Route>
-        <Route path='/:id' element={<DetalleProducto />} />
+        <Route path='/' element={<Inicio />} />
+        <Route path='/catalogo' element={<GrillaProductos />} />
         <Route path='/productos/:id' element={<DetalleProducto />} />
-        <Route path='/login' element={<LoginYRegistro></LoginYRegistro>} />
-        <Route path='*' element={<p>Error 404</p>} />
+        <Route path='/login' element={<LoginYRegistro />} />
+
+        {/* Panel de gestión: solo usuarios logueados */}
+        <Route element={<RutaProtegida />}>
+          <Route path='/productos' element={<FormProducto />} />
+        </Route>
+
+        <Route path='*' element={<PaginaNoEncontrada />} />
       </Routes>
-      <Footer></Footer>
-      </BrowserRouter>
-    </>
+      <Footer />
+    </BrowserRouter>
   )
 }
 

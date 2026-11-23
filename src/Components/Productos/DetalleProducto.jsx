@@ -1,11 +1,14 @@
 import { useContext, useEffect } from "react";
-import { ProductContext } from "../../Context/Productos/ProductContentx";
+import { ProductContext } from "../../Context/Productos/ProductContext";
 import { Button, Carousel, Row, Col, Badge, Card } from "react-bootstrap";
 import { LuShoppingCart } from "react-icons/lu";
 import { MdPayment } from "react-icons/md";
 import { FaCreditCard, FaMoneyBillWave, FaWhatsapp, FaArrowLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { convertirPrecio } from "../../Helpers/calculos";
+import { IMAGEN_PLACEHOLDER, imagenesDelProducto } from "../../Helpers/imagenes";
+
+const WHATSAPP_NEGOCIO = "5493816096533";
 
 const DetalleProducto = () => {
   const { productos } = useContext(ProductContext);
@@ -25,7 +28,18 @@ const DetalleProducto = () => {
     .filter(p => p.categoria === productoBuscado?.categoria && p.id !== id)
     .slice(0, 3);
 
-  if (!productoBuscado) return <h2 className="text-center my-5 py-5">Producto no encontrado</h2>;
+  if (!productoBuscado) {
+    return (
+      <div className="text-center my-5 py-5">
+        <h2>Producto no encontrado</h2>
+        <Button variant="primary" className="mt-3" onClick={() => navegacion("/catalogo")}>Ver catálogo</Button>
+      </div>
+    );
+  }
+
+  const linkWhatsApp = `https://wa.me/${WHATSAPP_NEGOCIO}?text=${encodeURIComponent(
+    `Hola! Quiero consultar por "${productoBuscado.nombre}" (${convertirPrecio(productoBuscado.precio)}) y los planes de financiación.`
+  )}`;
 
   return (
     <div className="container py-5">
@@ -37,13 +51,17 @@ const DetalleProducto = () => {
       <Row className="g-5">
         <Col lg={7}>
           <Carousel variant="dark" className="shadow-sm bg-white rounded border">
-            {[productoBuscado.imagenUno, productoBuscado.imagenDos, productoBuscado.imagenTres]
-              .filter(img => img)
-              .map((img, index) => (
-                <Carousel.Item key={index} style={{ height: '500px' }}>
-                  <img className="d-block w-100 h-100" src={img} alt={`Imagen ${index + 1}`} style={{ objectFit: 'contain', padding: '2rem' }} />
-                </Carousel.Item>
-              ))}
+            {imagenesDelProducto(productoBuscado).map((img, index) => (
+              <Carousel.Item key={index} style={{ height: '500px' }}>
+                <img
+                  className="d-block w-100 h-100"
+                  src={img}
+                  alt={`${productoBuscado.nombre} - imagen ${index + 1}`}
+                  onError={(e) => { e.currentTarget.src = IMAGEN_PLACEHOLDER; }}
+                  style={{ objectFit: 'contain', padding: '2rem' }}
+                />
+              </Carousel.Item>
+            ))}
           </Carousel>
         </Col>
         
@@ -51,7 +69,7 @@ const DetalleProducto = () => {
           {productoBuscado.ofertaActiva && <Badge bg="warning" text="dark" className="mb-3 px-3 py-2 fs-6 rounded-pill shadow-sm">¡Oferta Especial!</Badge>}
           <h1 className="fw-bold mb-3">{productoBuscado.nombre}</h1>
           <h2 className="text-primary mb-4 fw-bold display-6">
-            {convertirPrecio(productoBuscado.precio || 0)}
+            {convertirPrecio(productoBuscado.precio)}
           </h2>
           
           <p className="text-muted fs-5 mb-4">{productoBuscado.descripcion}</p>
@@ -103,7 +121,7 @@ const DetalleProducto = () => {
             <Col md={4}>
               <Card className="h-100 border-0 bg-light shadow-sm text-center p-3 d-flex flex-column justify-content-center align-items-center">
                 <Card.Text className="text-muted mb-3">¡Consultá por nuestros planes de financiación propia!</Card.Text>
-                <Button variant="success" className="rounded-pill px-4 shadow-sm">
+                <Button as="a" href={linkWhatsApp} target="_blank" rel="noopener noreferrer" variant="success" className="rounded-pill px-4 shadow-sm">
                   <FaWhatsapp className="me-2" /> Consultar por WhatsApp
                 </Button>
               </Card>
@@ -122,7 +140,13 @@ const DetalleProducto = () => {
                 <Col key={prod.id}>
                   <Card className="h-100 border-0 shadow-sm cursor-pointer" onClick={() => navegacion(`/productos/${prod.id}`)} style={{cursor: 'pointer'}}>
                     <div style={{ height: "200px", padding: "1rem" }}>
-                      <Card.Img variant="top" src={prod.imagenUno} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                      <Card.Img
+                        variant="top"
+                        src={prod.imagenUno || IMAGEN_PLACEHOLDER}
+                        alt={prod.nombre}
+                        onError={(e) => { e.currentTarget.src = IMAGEN_PLACEHOLDER; }}
+                        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                      />
                     </div>
                     <Card.Body className="text-center border-top">
                       <Card.Title className="fs-6 text-truncate">{prod.nombre}</Card.Title>
