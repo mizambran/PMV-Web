@@ -39,7 +39,7 @@ const Footer = () => {
                 <FaMapMarkerAlt className="me-2 text-primary" /> Tucumán, Argentina
               </li>
               <li className="mb-2">
-                <FaPhone className="me-2 text-primary" /> +54 9 381 609 6533
+                <FaPhone className="me-2 text-primary" /> +54 9 3815 88-5747
               </li>
               <li className="mb-2">
                 <FaEnvelope className="me-2 text-primary" /> contacto@pmvweb.com

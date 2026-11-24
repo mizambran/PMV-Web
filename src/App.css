@@ -1,0 +1,49 @@
+.marquee-contenedor {
+  width: 100%;
+  overflow: hidden;
+  background-color: #f4f1ea; /* El tono crema de tu referencia */
+  color: #1a2b56; /* Azul oscuro */
+  padding: 12px 0;
+  border-top: 1px solid #e5e0d5;
+  border-bottom: 1px solid #e5e0d5;
+  white-space: nowrap;
+  display: flex;
+}
+
+.marquee-contenido {
+  display: flex;
+  align-items: center;
+  animation: desplazamientoInfinito 25s linear infinite;
+}
+
+.marquee-contenedor:hover .marquee-contenido {
+  animation-play-state: paused; /* Pausa si el usuario pasa el mouse */
+}
+
+.marquee-item {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin: 0 2rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.marquee-punto {
+  height: 7px;
+  width: 7px;
+  background-color: #2b4c9b;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 2rem;
+}
+
+@keyframes desplazamientoInfinito {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

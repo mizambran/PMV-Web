@@ -4,7 +4,6 @@ import { useContext } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Menu from './Components/shared/Menu'
 import Inicio from './Components/Inicio/Inicio'
-import GrillaProductos from './Components/Inicio/GrillaProductos'
 import FormProducto from './Components/Productos/FormProducto'
 import Footer from './Components/shared/Footer'
 import LoginYRegistro from './Components/Usuarios/LoginYRegistro'
@@ -14,6 +13,7 @@ import PaginaNoEncontrada from './Components/shared/PaginaNoEncontrada'
 import BotonWhatsApp from './Components/shared/BotonWhatsapp'
 import Configuraciones from './Components/Usuarios/Config/Configuraciones'
 import { UserContext } from './Context/Usuarios/UserContext'
+import Catalogo from './Components/Productos/Catalogo'
 
 function App() {
   const { configWhatsapp } = useContext(UserContext)
@@ -23,7 +23,7 @@ function App() {
       <Menu />
       <Routes>
         <Route path='/' element={<Inicio />} />
-        <Route path='/catalogo' element={<GrillaProductos />} />
+        <Route path='/catalogo' element={<Catalogo />} />
         <Route path='/productos/:id' element={<DetalleProducto />} />
         <Route path='/login' element={<LoginYRegistro />} />
 
