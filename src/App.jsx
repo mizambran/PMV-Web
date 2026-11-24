@@ -14,6 +14,7 @@ import BotonWhatsApp from './Components/shared/BotonWhatsapp'
 import Configuraciones from './Components/Usuarios/Config/Configuraciones'
 import { UserContext } from './Context/Usuarios/UserContext'
 import Catalogo from './Components/Productos/Catalogo'
+import Mayorista from './Components/Inicio/Mayorista'
 
 function App() {
   const { configWhatsapp } = useContext(UserContext)
@@ -24,6 +25,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Inicio />} />
         <Route path='/catalogo' element={<Catalogo />} />
+        <Route path='/mayorista' element={<Mayorista />} />
         <Route path='/productos/:id' element={<DetalleProducto />} />
         <Route path='/login' element={<LoginYRegistro />} />
 

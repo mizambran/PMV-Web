@@ -46,6 +46,7 @@ const Menu = () => {
           <Nav className="me-auto">
             <NavLink to={'/'} end className={'nav-link'}>Inicio</NavLink>
             <NavLink to={'/catalogo'} className={'nav-link'}>Catálogo</NavLink>
+            <NavLink to={'/mayorista'} className={'nav-link'}>Mayorista</NavLink>
             {logueado && (
               <NavDropdown title={<span>Productos</span>}>
                 <NavDropdown.Item as={Link} to={'/productos'}>ABM</NavDropdown.Item>
