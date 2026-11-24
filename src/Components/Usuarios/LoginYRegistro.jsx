@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import {
   FaUser,
   FaEnvelope,
   FaLock,
-  FaGoogle,
   FaEyeSlash,
   FaEye,
 } from "react-icons/fa";
@@ -13,13 +12,14 @@ import { UserContext } from "../../Context/Usuarios/UserContext";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
+import { hashearContraseña, normalizarEmail } from "../../Helpers/seguridad";
 
 const LoginYRegistro = () => {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     getValues,
   } = useForm();
 
@@ -35,7 +35,6 @@ const LoginYRegistro = () => {
     registrado,
     setRegistrado,
     logueado,
-    setLogueado,
     setUsuarioLogueado,
   } = useContext(UserContext);
 
@@ -46,77 +45,83 @@ const LoginYRegistro = () => {
 
   const navigate = useNavigate();
 
-  const onSubmit = (data) => {
-    if (registrado) {
-      // 1. Verificamos primero si son las credenciales del .env
-      const esAdminEnv =
-        data.emailUsuario === import.meta.env.VITE_API_USUARIO &&
-        data.contraseñaUsuario === import.meta.env.VITE_API_PASSWORD;
+  const iniciarSesion = async (data) => {
+    const email = normalizarEmail(data.emailUsuario);
 
-      if (esAdminEnv) {
-        const usuarioAdmin = {
-          id: "admin",
-          nombreEmpresa: "Administrador",
-          emailUsuario: data.emailUsuario,
-        };
-        setLogueado(true);
-        setUsuarioLogueado(usuarioAdmin);
-        localStorage.setItem("user_session", JSON.stringify(usuarioAdmin));
-        
-        Swal.fire(
-          "¡Bienvenido Administrador!",
-          "Ingresaste con credenciales de demo.",
-          "success"
-        );
-        navigate("/productos");
-        return; // Cortamos la ejecución acá para que no siga buscando
-      }
-
-      // 2. Si no es admin, buscamos en el array de usuarios del context
-      const usuarioEncontrado = usuarios.find((usuario) => {
-        return (
-          usuario.emailUsuario === data.emailUsuario &&
-          usuario.contraseñaUsuario === data.contraseñaUsuario
-        );
-      });
-
-      if (usuarioEncontrado) {
-        setLogueado(true);
-        setUsuarioLogueado(usuarioEncontrado);
-        localStorage.setItem("user_session", JSON.stringify(usuarioEncontrado));
-        
-        Swal.fire(
-          `¡Bienvenido ${usuarioEncontrado.nombreEmpresa}!`,
-          "¡Preparate para generar muchas ventas!",
-          "success"
-        );
-        navigate("/productos");
-      } else {
-        Swal.fire("Credenciales incorrectas", "", "error");
-      }
-    } else {
-      // Lógica de Registro
-      const nuevoUsuario = {
-        id: uuidv4(),
-        nombreEmpresa: data.nombreEmpresa,
-        emailUsuario: data.emailUsuario,
-        contraseñaUsuario: data.contraseñaUsuario,
-      };
-
-      setUsuarios([...usuarios, nuevoUsuario]);
-      reset();
-      
-      setLogueado(true);
-      setUsuarioLogueado(nuevoUsuario);
-      localStorage.setItem("user_session", JSON.stringify(nuevoUsuario));
-
-      Swal.fire({
-        title: "¡Registro Correcto!",
-        text: "¡Que comiencen las ventas!",
-        icon: "success",
-      });
-      
+    // 1. Usuario administrador de DEMO definido en .env.
+    //    OJO: las variables VITE_ quedan visibles en el JavaScript publicado,
+    //    así que esto sirve solo para demostraciones, nunca como seguridad real.
+    const emailAdmin = normalizarEmail(import.meta.env.VITE_API_USUARIO || "");
+    const contraseñaAdmin = import.meta.env.VITE_API_PASSWORD || "";
+    if (emailAdmin && contraseñaAdmin && email === emailAdmin && data.contraseñaUsuario === contraseñaAdmin) {
+      setUsuarioLogueado({ id: "admin", nombreEmpresa: "Administrador", emailUsuario: email, rol: "admin" });
+      Swal.fire("¡Bienvenido Administrador!", "Ingresaste con credenciales de demo.", "success");
       navigate("/productos");
+      return;
+    }
+
+    // 2. Usuarios registrados: se compara el hash de la contraseña.
+    const hash = await hashearContraseña(data.contraseñaUsuario);
+    const usuarioEncontrado = usuarios.find((usuario) => {
+      if (normalizarEmail(usuario.emailUsuario) !== email) return false;
+      // Compatibilidad con usuarios guardados por la versión anterior (contraseña en texto plano)
+      return usuario.contraseñaHash ? usuario.contraseñaHash === hash : usuario.contraseñaUsuario === data.contraseñaUsuario;
+    });
+
+    if (!usuarioEncontrado) {
+      Swal.fire("Credenciales incorrectas", "Revisá el email y la contraseña.", "error");
+      return;
+    }
+
+    // Si era un usuario viejo, se migra a contraseña hasheada y se borra el texto plano.
+    if (!usuarioEncontrado.contraseñaHash) {
+      setUsuarios((actuales) =>
+        actuales.map((usuario) => {
+          if (usuario.id !== usuarioEncontrado.id) return usuario;
+          // eslint-disable-next-line no-unused-vars
+          const { contraseñaUsuario, ...resto } = usuario;
+          return { ...resto, contraseñaHash: hash };
+        })
+      );
+    }
+
+    setUsuarioLogueado(usuarioEncontrado);
+    Swal.fire(`¡Bienvenido ${usuarioEncontrado.nombreEmpresa}!`, "¡Preparate para generar muchas ventas!", "success");
+    navigate("/productos");
+  };
+
+  const registrarUsuario = async (data) => {
+    const email = normalizarEmail(data.emailUsuario);
+    const emailAdmin = normalizarEmail(import.meta.env.VITE_API_USUARIO || "");
+
+    if (email === emailAdmin || usuarios.some((usuario) => normalizarEmail(usuario.emailUsuario) === email)) {
+      Swal.fire("Ese email ya está registrado", "Iniciá sesión o usá otro email.", "warning");
+      return;
+    }
+
+    const nuevoUsuario = {
+      id: uuidv4(),
+      nombreEmpresa: data.nombreEmpresa.trim(),
+      emailUsuario: email,
+      contraseñaHash: await hashearContraseña(data.contraseñaUsuario),
+      rol: "empresa",
+    };
+
+    setUsuarios((actuales) => [...actuales, nuevoUsuario]);
+    reset();
+    setUsuarioLogueado(nuevoUsuario);
+
+    Swal.fire({ title: "¡Registro Correcto!", text: "¡Que comiencen las ventas!", icon: "success" });
+    navigate("/productos");
+  };
+
+  const onSubmit = async (data) => {
+    try {
+      if (registrado) await iniciarSesion(data);
+      else await registrarUsuario(data);
+    } catch {
+      // crypto.subtle solo existe en contextos seguros (https o localhost)
+      Swal.fire("No se pudo procesar", "Abrí la página desde https o localhost e intentá de nuevo.", "error");
     }
   };
 
@@ -209,12 +214,14 @@ const LoginYRegistro = () => {
                       placeholder="********"
                       className="border-start-0"
                       {...register("contraseñaUsuario", {
-                        required: "La contraseña es obligatoria"
+                        required: "La contraseña es obligatoria",
+                        ...(registrado ? {} : { minLength: { value: 6, message: "Mínimo 6 caracteres" } }),
                       })}
                     />
                     <button
                       type="button"
                       onClick={toggleVerContraseña}
+                      aria-label={verContraseña ? "Ocultar contraseña" : "Mostrar contraseña"}
                       style={{
                         border: "transparent",
                         backgroundColor: "transparent",
@@ -273,18 +280,9 @@ const LoginYRegistro = () => {
                     variant="primary"
                     size="lg"
                     className="shadow-sm"
+                    disabled={isSubmitting}
                   >
                     {registrado ? "Iniciar Sesión" : "Registrarme"}
-                  </Button>
-                </div>
-
-                <div className="text-center my-3 text-muted small">
-                  O ingresá con
-                </div>
-
-                <div className="d-grid gap-2 mb-4">
-                  <Button variant="outline-danger" size="lg">
-                    <FaGoogle className="me-2" /> Google
                   </Button>
                 </div>
 

@@ -21,10 +21,11 @@ const Configuraciones = () => {
   const { usuarios, setUsuarios, configWhatsapp, setConfigWhatsapp } =
     useContext(UserContext);
 
- useEffect(() => {
-    const usuarioDePrueba = usuariosDePrueba
- setUsuarios(usuarioDePrueba)
- }, [])
+  // Carga los usuarios de prueba SOLO si todavía no hay ninguno registrado
+  // (antes los reemplazaba siempre y se borraban las cuentas reales).
+  useEffect(() => {
+    setUsuarios((actuales) => (actuales.length === 0 ? usuariosDePrueba : actuales));
+  }, [setUsuarios]);
 
   // Estado para controlar el Modal de edición de usuario
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -153,9 +154,7 @@ const cancelarEdicionWsp = () => {
     }
     const numeroLimpio = celular.replace(/\D/g, "");
     // Podemos agregar un texto cuando ellos presionen el botón de wsp en la tabla de usuarios activos
-    const texto = encodeURIComponent(
-      ``
-    );
+    const texto = encodeURIComponent(`¡Hola ${nombre || ""}! Te escribimos de PMV Web.`);
     window.open(
       `https://wa.me/${numeroLimpio}?text=${texto}`,
       "_blank",
